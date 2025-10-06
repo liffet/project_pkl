@@ -16,14 +16,21 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'install_date' => 'required|date',
-            'replacement_date' => 'required|date|after_or_equal:install_date',
-            'photo' => 'nullable|image|max:2048',
+            'category_id'       => 'required|exists:categories,id',
+            'code'              => 'required|string|max:50|unique:items,code', // user isi manual
+            'name'              => 'required|string|max:255',
+            'install_date'      => 'required|date',
+            'replacement_date'  => 'required|date|after_or_equal:install_date',
+            'photo'             => 'nullable|image|max:2048',
         ]);
 
-        $data = $request->only(['category_id','name','install_date','replacement_date']);
+        $data = $request->only([
+            'category_id',
+            'code', // ambil dari input user
+            'name',
+            'install_date',
+            'replacement_date'
+        ]);
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('items', 'public');
@@ -39,14 +46,21 @@ class ItemController extends Controller
         $item = Item::findOrFail($id);
 
         $request->validate([
-            'category_id' => 'sometimes|exists:categories,id',
-            'name' => 'sometimes|string|max:255',
-            'install_date' => 'sometimes|date',
-            'replacement_date' => 'sometimes|date',
-            'photo' => 'nullable|image|max:2048',
+            'category_id'       => 'sometimes|exists:categories,id',
+            'code'              => 'sometimes|string|max:50|unique:items,code,' . $item->id, // tetap unik
+            'name'              => 'sometimes|string|max:255',
+            'install_date'      => 'sometimes|date',
+            'replacement_date'  => 'sometimes|date|after_or_equal:install_date',
+            'photo'             => 'nullable|image|max:2048',
         ]);
 
-        $data = $request->only(['category_id','name','install_date','replacement_date']);
+        $data = $request->only([
+            'category_id',
+            'code',
+            'name',
+            'install_date',
+            'replacement_date'
+        ]);
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('items', 'public');
@@ -62,7 +76,7 @@ class ItemController extends Controller
         Item::findOrFail($id)->delete();
         return response()->json(['message' => 'Deleted successfully']);
     }
- 
+
     // Barang yang hampir expired (misal H-7)
     public function soonExpired()
     {

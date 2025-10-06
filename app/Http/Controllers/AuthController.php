@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -59,11 +60,15 @@ class AuthController extends Controller
 
     // Logout
     public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
+{
+    Auth::logout();
 
-        return response()->json(['message' => 'Logged out']);
-    }
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/'); // arahkan ke halaman utama
+}
+
           
 
     public function registerWeb(Request $request)
