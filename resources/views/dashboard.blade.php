@@ -273,10 +273,14 @@
                                     <th class="py-3 border-0 text-muted small fw-semibold">Ruangan</th>
                                     <th class="py-3 border-0 text-muted small fw-semibold">Lantai</th>
                                     <th class="py-3 border-0 text-muted small fw-semibold">Tanggal Maintenance</th>
+                                    <th class="py-3 border-0 text-muted small fw-semibold">Sisa Waktu</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($safeList as $item)
+                                    @php
+                                        $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->replacement_date), false);
+                                    @endphp
                                     <tr>
                                         <td class="px-4 align-middle">{{ $loop->iteration }}</td>
                                         <td class="align-middle"><span class="badge bg-light text-dark border">{{ $item->code }}</span></td>
@@ -289,10 +293,15 @@
                                         <td class="align-middle">{{ $item->room ?? '-' }}</td>
                                         <td class="align-middle">{{ $item->floor ?? '-' }}</td>
                                         <td class="align-middle">{{ \Carbon\Carbon::parse($item->replacement_date)->isoFormat('D MMM YYYY') }}</td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>{{ $daysLeft }} hari
+                                            </span>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center py-5">
+                                        <td colspan="8" class="text-center py-5">
                                             <div class="text-muted">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="mb-3 opacity-25" viewBox="0 0 16 16">
                                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>

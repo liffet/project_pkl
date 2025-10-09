@@ -10,7 +10,6 @@ class DashboardController extends Controller
 {
     public function __construct()
     {
-        // pastikan dashboard hanya untuk user yang login
         $this->middleware('auth');
     }
 
@@ -18,41 +17,35 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // jumlah total perangkat
+        // Jumlah total perangkat
         $totalItems = Item::count();
 
-        // perangkat yang sudah lewat replacement_date -> harus maintenance sekarang
+        // Perangkat yang sudah lewat replacement_date (harus maintenance)
         $maintenanceNow = Item::whereDate('replacement_date', '<', now())->count();
 
-        // perangkat yang akan mencapai replacement_date dalam 7 hari (termasuk hari ini)
+        // Perangkat yang akan maintenance dalam 7 hari ke depan
         $soonMaintenance = Item::whereDate('replacement_date', '>=', now())
                                ->whereDate('replacement_date', '<=', now()->addDays(7))
                                ->count();
 
-        // perangkat yang masih aman (lebih dari 30 hari dari sekarang)
-        $safeItems = Item::whereDate('replacement_date', '>', now()->addDays(30))->count();
+        // Perangkat yang masih aman (lebih dari 7 hari dari sekarang)
+        $safeItems = Item::whereDate('replacement_date', '>', now()->addDays(7))->count();
 
-        // perangkat yang tidak termasuk kategori di atas (opsional)
-        $nearSafe = $totalItems - ($maintenanceNow + $soonMaintenance + $safeItems);
-
-        // --- daftar item sesuai kategori (dipakai di tabel) ---
+        // Daftar item untuk tabel
         $maintenanceList = Item::whereDate('replacement_date', '<', now())
                                ->with('category')
                                ->orderBy('replacement_date', 'asc')
-                               ->take(3)
                                ->get();
 
         $soonList = Item::whereDate('replacement_date', '>=', now())
                         ->whereDate('replacement_date', '<=', now()->addDays(7))
                         ->with('category')
                         ->orderBy('replacement_date', 'asc')
-                        ->take(3)
                         ->get();
 
         $safeList = Item::whereDate('replacement_date', '>', now()->addDays(7))
                         ->with('category')
                         ->orderBy('replacement_date', 'asc')
-                        ->take(3)
                         ->get();
 
         return view('dashboard', compact(
@@ -61,7 +54,6 @@ class DashboardController extends Controller
             'maintenanceNow',
             'soonMaintenance',
             'safeItems',
-            'nearSafe',
             'maintenanceList',
             'soonList',
             'safeList'

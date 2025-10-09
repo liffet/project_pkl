@@ -1,0 +1,58 @@
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+  2025-10-07 10:51:06 Running ["artisan" maintenance:check] ............................................... 889ms FAIL
+  ⇂ "C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.exe" "artisan" maintenance:check > "NUL" 2>&1  
+
+
+  2025-10-07 10:53:42 Running ["artisan" maintenance:check] ............................................... 848ms FAIL
+  ⇂ "C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.exe" "artisan" maintenance:check > "NUL" 2>&1  
+
+=== Manual maintenance check === 
+
+   Illuminate\Database\QueryException 
+
+  could not find driver (Connection: pgsql, SQL: select count(*) as aggregate from "items")
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+    825▕                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826▕                 );
+    827▕             }
+    828▕ 
+  ➜ 829▕             throw new QueryException(
+    830▕                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    831▕             );
+    832▕         }
+    833▕     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connectors\Connector.php:65
+      PDOException::("could not find driver")
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connectors\Connector.php:65
+      PDO::__construct("pgsql:host=127.0.0.1;dbname='infrastruktur_jaringan';port=5432;client_encoding='utf8';sslmode=prefer", "postgres", "Alif.1606", [])
+
+
+Warning: PHP Startup: Unable to load dynamic library 'zip' (tried: C:/laragon/bin/php/php-8.1.10-Win32-vs16-x64/ext\zip (The specified module could not be found), C:/laragon/bin/php/php-8.1.10-Win32-vs16-x64/ext\php_zip.dll (The specified module could not be found)) in Unknown on line 0
+
+  2025-10-07 10:56:38 Running ["artisan" maintenance:check] ............................................. 2,292ms DONE
+  ⇂ "C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.exe" "artisan" maintenance:check > "NUL" 2>&1  
+
+=== Manual maintenance check === 
+
+Warning: PHP Startup: Unable to load dynamic library 'zip' (tried: C:/laragon/bin/php/php-8.1.10-Win32-vs16-x64/ext\zip (The specified module could not be found), C:/laragon/bin/php/php-8.1.10-Win32-vs16-x64/ext\php_zip.dll (The specified module could not be found)) in Unknown on line 0
+Notifikasi maintenance berhasil dikirim ke Telegram.
+
+  2025-10-07 10:58:46 Running ["artisan" maintenance:check] ............................................. 4,916ms DONE
+  ⇂ "C:\laragon\bin\php\php-8.1.10-Win32-vs16-x64\php.exe" "artisan" maintenance:check > "NUL" 2>&1  
+
+=== Manual maintenance check === 
+Notifikasi maintenance berhasil dikirim ke Telegram.
+
+   INFO  No scheduled commands are ready to run.  
+
+=== Manual maintenance check === 
+Notifikasi maintenance berhasil dikirim ke Telegram.

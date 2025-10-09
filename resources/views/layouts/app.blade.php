@@ -200,9 +200,9 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link {{ request()->is('reports*') ? 'active' : '' }}">
+                <a href="{{ route('damage-reports.index') }}" class="sidebar-menu-link {{ request()->routeIs('damage-reports.*') ? 'active' : '' }}">
                     <i class="bi bi-bar-chart-line sidebar-menu-icon"></i>
-                    <span>Laporan</span>
+                    <span>Laporan Kerusakan</span>
                 </a>
             </li>
             <li class="sidebar-menu-item" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">

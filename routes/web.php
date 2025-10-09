@@ -6,6 +6,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemWebController;
+use App\Http\Controllers\DamageReportController;
+
+
 
 
 // Route logout manual
@@ -25,13 +28,16 @@ use App\Http\Controllers\ItemWebController;
 
 
 
+// Halaman Register & Login
 Route::get('/register', function () {
     return view('auth.register');
-});
-Route::get('/', function () {
-    return view(view: 'auth.login');
-});
+})->name('register');
 
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+// Aksi Register & Login (POST)
 Route::post('/register', [AuthController::class, 'registerWeb'])->name('register.web');
 Route::post('/login', [AuthController::class, 'loginWeb'])->name('login.web');
 
@@ -46,3 +52,5 @@ Route::resource('items', ItemWebController::class);
 Route::get('/search', [ItemWebController::class, 'search'])->name('items.search');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::resource('damage-reports', DamageReportController::class)->only(['index', 'show', 'update']);
