@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class DamageReportController extends Controller
 {
-    // Menampilkan semua laporan kerusakan
+
     public function index()
     {
         $reports = DamageReport::with(['user', 'category'])->latest()->get();
