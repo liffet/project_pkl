@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/items', [ItemController::class, 'index']);
     Route::get('/items/soon-expired', [ItemController::class, 'soonExpired']);
     
-            Route::get('/damage-reports', [DamageReportController::class, 'index']);
+    Route::get('/damage-reports', [DamageReportController::class, 'index']);
     Route::post('/damage-reports', [DamageReportController::class, 'store']);
     Route::get('/damage-reports/{id}', [DamageReportController::class, 'show']);
     Route::put('/damage-reports/{id}', [DamageReportController::class, 'update']);

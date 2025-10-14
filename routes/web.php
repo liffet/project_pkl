@@ -54,3 +54,8 @@ Route::get('/search', [ItemWebController::class, 'search'])->name('items.search'
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::resource('damage-reports', DamageReportController::class)->only(['index', 'show', 'update']);
+
+Route::get('/damage-reports', [DashboardController::class, 'report'])->name('damage-reports.index');
+
+Route::get('/items', [DashboardController::class, 'item'])->name('items.index');
+

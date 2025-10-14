@@ -1,34 +1,33 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
+<div class="container-fluid px-4 py-4">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <!-- Header Section -->
+            <!-- Page Header -->
             <div class="mb-4">
-                <h2 class="fw-bold text-dark mb-1">
-                    <i class="bi bi-pencil-square text-warning me-2"></i>Edit Perangkat
-                </h2>
-                <p class="text-muted mb-0">Perbarui informasi perangkat: <strong>{{ $item->name }}</strong> ({{ $item->code }})</p>
+                <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Edit Perangkat</h2>
+                <p class="text-muted mb-0" style="font-size: 0.875rem;">
+                    Perbarui informasi perangkat: <strong>{{ $item->name }}</strong>
+                    <span class="badge-code ms-2">{{ $item->code }}</span>
+                </p>
             </div>
 
             @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
-                    <div class="d-flex">
-                        <div class="me-3">
-                            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="alert-heading mb-2">Terdapat Kesalahan Input!</h6>
-                            <ul class="mb-0 ps-3">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 1.25rem;"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-2 fw-semibold">Terdapat Kesalahan Input!</h6>
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             @endif
 
             <form action="{{ route('items.update', $item->id) }}" method="POST" enctype="multipart/form-data">
@@ -36,63 +35,75 @@
                 @method('PUT')
 
                 <div class="row g-4">
-                    <!-- Left Column - Basic Info -->
+                    <!-- Left Column - Informasi Dasar -->
                     <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold mb-4 text-primary">
-                                    <i class="bi bi-info-circle me-2"></i>Informasi Dasar
-                                </h5>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-upc-scan me-1 text-muted"></i>Kode Perangkat
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Informasi Dasar</span>
+                            </div>
+                            <div class="form-card-body">
+                                <!-- Kode Perangkat (Disabled) -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-upc-scan"></i>
+                                        Kode Perangkat
                                     </label>
-                                    <input type="text" class="form-control form-control-lg" 
-                                           value="{{ $item->code }}" 
-                                           disabled
-                                           style="background-color: #f8f9fa;">
-                                    <small class="text-muted">
-                                        <i class="bi bi-lock me-1"></i>Kode tidak dapat diubah
+                                    <input type="text"
+                                        class="form-control"
+                                        value="{{ $item->code }}"
+                                        disabled
+                                        style="background-color: #f3f4f6; cursor: not-allowed;">
+                                    <small class="form-text">
+                                        <i class="bi bi-lock-fill"></i>
+                                        Kode tidak dapat diubah
                                     </small>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-tag me-1 text-muted"></i>Kategori
+                                <!-- Kategori -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-grid-3x3-gap"></i>
+                                        Kategori
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select name="category_id" class="form-select form-select-lg" required>
+                                    <select name="category_id" class="form-select" required>
                                         @foreach($categories as $cat)
-                                            <option value="{{ $cat->id }}" {{ old('category_id', $item->category_id) == $cat->id ? 'selected' : '' }}>
-                                                {{ $cat->name }}
-                                            </option>
+                                        <option value="{{ $cat->id }}" {{ old('category_id', $item->category_id) == $cat->id ? 'selected' : '' }}>
+                                            {{ $cat->name }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-laptop me-1 text-muted"></i>Nama Perangkat
+                                <!-- Nama Perangkat -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-laptop"></i>
+                                        Nama Perangkat
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" name="name" class="form-control form-control-lg" 
-                                           value="{{ old('name', $item->name) }}" 
-                                           placeholder="Masukkan nama perangkat" 
-                                           required>
+                                    <input type="text"
+                                        name="name"
+                                        class="form-control"
+                                        value="{{ old('name', $item->name) }}"
+                                        placeholder="Masukkan nama perangkat"
+                                        required>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-toggle-on me-1 text-muted"></i>Status
+                                <!-- Status -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-circle-fill"></i>
+                                        Status
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select name="status" class="form-select form-select-lg" required>
+                                    <select name="status" class="form-select" required>
                                         <option value="active" {{ old('status', $item->status) == 'active' ? 'selected' : '' }}>
-                                            🟢 Aktif
+                                            Aktif
                                         </option>
                                         <option value="inactive" {{ old('status', $item->status) == 'inactive' ? 'selected' : '' }}>
-                                            🔴 Tidak Aktif
+                                            Tidak Aktif
                                         </option>
                                     </select>
                                 </div>
@@ -100,103 +111,129 @@
                         </div>
                     </div>
 
-                    <!-- Right Column - Location & Dates -->
+                    <!-- Right Column - Lokasi & Jadwal -->
                     <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold mb-4 text-primary">
-                                    <i class="bi bi-geo-alt me-2"></i>Lokasi & Jadwal
-                                </h5>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-door-open me-1 text-muted"></i>Ruangan
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Lokasi & Jadwal</span>
+                            </div>
+                            <div class="form-card-body">
+                                <!-- Ruangan -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-building"></i>
+                                        Ruangan
                                     </label>
-                                    <input type="text" name="room" class="form-control form-control-lg" 
-                                           value="{{ old('room', $item->room) }}" 
-                                           placeholder="Contoh: Lab Komputer 1">
+                                    <input type="text"
+                                        name="room"
+                                        class="form-control"
+                                        value="{{ old('room', $item->room) }}"
+                                        placeholder="Contoh: Ruang Pusdatin">
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-building me-1 text-muted"></i>Lantai
+                                <!-- Lantai -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-building"></i>
+                                        Lantai
                                     </label>
-                                    <input type="text" name="floor" class="form-control form-control-lg" 
-                                           value="{{ old('floor', $item->floor) }}" 
-                                           placeholder="Contoh: Lantai 2">
+                                    <select name="floor" class="form-select">
+                                        <option value="">-- Pilih Lantai --</option>
+                                        @for ($i = 1; $i <= 25; $i++)
+                                            <option value="Lantai {{ $i }}"
+                                            {{ old('floor', $item->floor) == "Lantai $i" ? 'selected' : '' }}>
+                                            Lantai {{ $i }}
+                                            </option>
+                                            @endfor
+                                    </select>
+
+
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-calendar-check me-1 text-muted"></i>Tanggal Pasang
+                                <!-- Tanggal Pasang -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-calendar-check"></i>
+                                        Tanggal Pasang
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input type="date" name="install_date" class="form-control form-control-lg" 
-                                           value="{{ old('install_date', $item->install_date) }}" 
-                                           required>
+                                    <input type="date"
+                                        name="install_date"
+                                        class="form-control"
+                                        value="{{ old('install_date', $item->install_date) }}"
+                                        required>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-wrench me-1 text-warning"></i>Tanggal Penggantian
+                                <!-- Tanggal Pergantian -->
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-wrench"></i>
+                                        Tanggal Pergantian
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input type="date" name="replacement_date" class="form-control form-control-lg" 
-                                           value="{{ old('replacement_date', $item->replacement_date) }}" 
-                                           required>
-                                    <small class="text-muted">
-                                        <i class="bi bi-info-circle me-1"></i>Jadwal penggantian/maintenance berkala
+                                    <input type="date"
+                                        name="replacement_date"
+                                        class="form-control"
+                                        value="{{ old('replacement_date', $item->replacement_date) }}"
+                                        required>
+                                    <small class="form-text">
+                                        <i class="bi bi-info-circle"></i>
+                                        Jadwal penggantian/maintenance berkala
                                     </small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Full Width - Photo Upload -->
+                    <!-- Full Width - Foto Perangkat -->
                     <div class="col-12">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold mb-4 text-primary">
-                                    <i class="bi bi-image me-2"></i>Foto Perangkat
-                                </h5>
-
-                                <div class="row align-items-center">
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i class="bi bi-image"></i>
+                                <span>Foto Perangkat</span>
+                            </div>
+                            <div class="form-card-body">
+                                <div class="row">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">
-                                            <i class="bi bi-camera me-1 text-muted"></i>Upload Foto Baru
-                                        </label>
-                                        <input type="file" name="photo" class="form-control form-control-lg" 
-                                               onchange="previewImage(event)" 
-                                               accept="image/*">
-                                        <small class="text-muted">
-                                            <i class="bi bi-info-circle me-1"></i>Format: JPG, PNG, GIF (Max. 2MB) - Kosongkan jika tidak ingin mengubah foto
-                                        </small>
-                                    </div>
-                                    <div class="col-md-6 text-center">
-                                        @if($item->photo)
-                                            <div id="current-photo-container">
-                                                <p class="text-muted small mb-2">Foto Saat Ini:</p>
-                                                <img id="current-photo" 
-                                                     src="{{ asset('storage/'.$item->photo) }}" 
-                                                     alt="Foto Saat Ini" 
-                                                     class="img-fluid rounded shadow-sm" 
-                                                     style="max-height: 200px;">
-                                            </div>
-                                        @endif
-                                        <div id="preview-container" style="display:none;">
-                                            <p class="text-success small mb-2">
-                                                <i class="bi bi-check-circle me-1"></i>Preview Foto Baru:
-                                            </p>
-                                            <img id="preview" src="#" alt="Preview Foto" 
-                                                 class="img-fluid rounded shadow-sm" 
-                                                 style="max-height: 200px;">
+                                        <div class="form-group mb-0">
+                                            <label class="form-label">
+                                                <i class="bi bi-camera"></i>
+                                                Upload Foto Baru
+                                            </label>
+                                            <input type="file"
+                                                name="photo"
+                                                class="form-control"
+                                                onchange="previewImage(event)"
+                                                accept="image/*">
+                                            <small class="form-text">
+                                                <i class="bi bi-info-circle"></i>
+                                                Format: JPG, PNG, GIF (Max. 2MB) - Kosongkan jika tidak ingin mengubah foto
+                                            </small>
                                         </div>
-                                        @if(!$item->photo)
-                                            <div id="no-photo" class="text-muted py-4">
-                                                <i class="bi bi-image fs-1 d-block mb-2 opacity-25"></i>
-                                                <small>Belum ada foto</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="preview-container">
+                                            @if($item->photo)
+                                            <div id="current-photo-container" class="image-preview">
+                                                <p class="preview-label">Foto Saat Ini:</p>
+                                                <img id="current-photo"
+                                                    src="{{ asset('storage/'.$item->photo) }}"
+                                                    alt="Foto Saat Ini">
                                             </div>
-                                        @endif
+                                            @else
+                                            <div id="no-photo" class="no-preview">
+                                                <i class="bi bi-image"></i>
+                                                <p>Belum ada foto</p>
+                                            </div>
+                                            @endif
+                                            <div id="preview-container" class="image-preview" style="display:none;">
+                                                <p class="preview-label text-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Preview Foto Baru:
+                                                </p>
+                                                <img id="preview" src="#" alt="Preview">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -205,20 +242,19 @@
 
                     <!-- Action Buttons -->
                     <div class="col-12">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="d-flex flex-wrap gap-2 justify-content-end">
-                                    <a href="{{ route('items.index') }}" class="btn btn-outline-secondary btn-lg px-4">
-                                        <i class="bi bi-x-circle me-2"></i>Batal
-                                    </a>
-                                    <a href="{{ route('items.show', $item->id) }}" class="btn btn-outline-info btn-lg px-4">
-                                        <i class="bi bi-eye me-2"></i>Lihat Detail
-                                    </a>
-                                    <button type="submit" class="btn btn-warning btn-lg px-5">
-                                        <i class="bi bi-check-circle me-2"></i>Update Perangkat
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="form-actions">
+                            <a href="{{ route('items.index') }}" class="btn-cancel">
+                                <i class="bi bi-x-circle"></i>
+                                Batal
+                            </a>
+                            <a href="{{ route('items.show', $item->id) }}" class="btn-view">
+                                <i class="bi bi-eye"></i>
+                                Lihat Detail
+                            </a>
+                            <button type="submit" class="btn-submit warning">
+                                <i class="bi bi-check-circle"></i>
+                                Update Perangkat
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -228,48 +264,270 @@
 </div>
 
 <style>
-    .form-control:focus, .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
     }
 
-    .form-control-lg, .form-select-lg {
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
+    .form-card-header {
+        background: #2D4194;
+        color: white;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .card {
-        transition: all 0.3s ease;
+    .form-card-header i {
+        font-size: 1.125rem;
     }
 
-    .btn {
-        transition: all 0.3s ease;
-        border-radius: 0.5rem;
+    .form-card-body {
+        padding: 1.5rem;
     }
 
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    /* Form Group */
+    .form-group {
+        margin-bottom: 1.5rem;
     }
 
-    .alert {
-        border-radius: 0.5rem;
+    .form-group:last-child {
+        margin-bottom: 0;
     }
 
-    label {
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
         margin-bottom: 0.5rem;
     }
 
-    .text-danger {
-        font-weight: bold;
+    .form-label i {
+        font-size: 1rem;
+        color: #6b7280;
     }
 
-    #preview, #current-photo {
-        transition: all 0.3s ease;
+    .form-label .text-danger {
+        margin-left: auto;
     }
 
-    #preview:hover, #current-photo:hover {
-        transform: scale(1.05);
+    /* Form Controls */
+    .form-control,
+    .form-select {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.875rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #2D4194;
+        box-shadow: 0 0 0 3px rgba(45, 65, 148, 0.1);
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: #9ca3af;
+    }
+
+    .form-text {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.375rem;
+    }
+
+    .form-text i {
+        font-size: 0.875rem;
+    }
+
+    /* Badge Code in Header */
+    .badge-code {
+        display: inline-block;
+        padding: 0.25rem 0.625rem;
+        background: #f3f4f6;
+        color: #374151;
+        border-radius: 6px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        font-family: 'Monaco', 'Courier New', monospace;
+    }
+
+    /* Preview Container */
+    .preview-container {
+        height: 100%;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .no-preview {
+        text-align: center;
+        color: #9ca3af;
+    }
+
+    .no-preview i {
+        font-size: 3rem;
+        opacity: 0.3;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .no-preview p {
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .image-preview {
+        width: 100%;
+        text-align: center;
+    }
+
+    .image-preview .preview-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+
+    .image-preview img {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        transition: transform 0.2s;
+    }
+
+    .image-preview img:hover {
+        transform: scale(1.02);
+    }
+
+    /* Action Buttons */
+    .form-actions {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.5rem;
+        background: white;
+        color: #ef4444;
+        border: 1px solid #ef4444;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .btn-view {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.5rem;
+        background: white;
+        color: #3b82f6;
+        border: 1px solid #3b82f6;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-view:hover {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.5rem;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-submit.warning {
+        background: #f59e0b;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-submit.warning:hover {
+        background: #d97706;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Alert */
+    .alert {
+        border-radius: 12px;
+        border: 1px solid #fecaca;
+        padding: 1rem 1.25rem;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .alert h6 {
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .alert ul {
+        font-size: 0.8125rem;
+        margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-cancel,
+        .btn-view,
+        .btn-submit {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 
@@ -278,18 +536,18 @@
         const file = event.target.files[0];
         if (file) {
             let reader = new FileReader();
-            reader.onload = function(){
+            reader.onload = function() {
                 let output = document.getElementById('preview');
                 let previewContainer = document.getElementById('preview-container');
                 let currentContainer = document.getElementById('current-photo-container');
                 let noPhoto = document.getElementById('no-photo');
-                
+
                 output.src = reader.result;
                 previewContainer.style.display = 'block';
-                
+
                 // Sembunyikan foto lama dan placeholder
-                if(currentContainer) currentContainer.style.display = 'none';
-                if(noPhoto) noPhoto.style.display = 'none';
+                if (currentContainer) currentContainer.style.display = 'none';
+                if (noPhoto) noPhoto.style.display = 'none';
             };
             reader.readAsDataURL(file);
         }

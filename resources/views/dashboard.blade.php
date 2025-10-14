@@ -2,322 +2,616 @@
 
 @section('content')
 <div class="container-fluid px-4 py-4">
-    <!-- Header Section -->
+    <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1">Dashboard Maintenance</h2>
-            <p class="text-muted mb-0">Selamat datang, {{ Auth::user()->name ?? 'User' }} 👋</p>
+            <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Dashboard Maintenance</h2>
         </div>
         <div class="text-end">
-            <small class="text-muted d-block">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}</small>
-            <small class="text-muted">{{ \Carbon\Carbon::now()->format('H:i') }} WIB</small>
+            <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
         </div>
     </div>
 
     <!-- Stats Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 overflow-hidden">
-                <div class="card-body position-relative">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-2 small fw-medium">Total Perangkat</p>
-                            <h2 class="fw-bold mb-0">{{ $totalItems ?? 0 }}</h2>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stats-label">
+                            <span class="stats-bullet primary"></span>
+                            Total Perangkat
                         </div>
-                        <div class="bg-primary bg-opacity-10 rounded-3 p-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-primary" viewBox="0 0 16 16">
-                                <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z"/>
-                                <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                            </svg>
-                        </div>
+                        <div class="stats-value">{{ $totalItems ?? 0 }}</div>
                     </div>
-                    <div class="position-absolute bottom-0 start-0 w-100 bg-primary" style="height: 3px;"></div>
+                    <div class="stats-icon primary">
+                        <i class="bi bi-phone"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 overflow-hidden">
-                <div class="card-body position-relative">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-2 small fw-medium">Harus Maintenance</p>
-                            <h2 class="fw-bold mb-0 text-danger">{{ $maintenanceNow ?? 0 }}</h2>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stats-label">
+                            <span class="stats-bullet success"></span>
+                            Masih Aman
                         </div>
-                        <div class="bg-danger bg-opacity-10 rounded-3 p-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-danger" viewBox="0 0 16 16">
-                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                            </svg>
-                        </div>
+                        <div class="stats-value text-success">{{ $safeItems ?? 0 }}</div>
                     </div>
-                    <div class="position-absolute bottom-0 start-0 w-100 bg-danger" style="height: 3px;"></div>
+                    <div class="stats-icon success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 overflow-hidden">
-                <div class="card-body position-relative">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-2 small fw-medium">Hampir Maintenance</p>
-                            <h2 class="fw-bold mb-0 text-warning">{{ $soonMaintenance ?? 0 }}</h2>
-                            <small class="text-muted">≤7 hari</small>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stats-label">
+                            <span class="stats-bullet warning"></span>
+                            Hampir Maintenance
                         </div>
-                        <div class="bg-warning bg-opacity-10 rounded-3 p-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-warning" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                            </svg>
-                        </div>
+                        <div class="stats-value text-warning">{{ $soonMaintenance ?? 0 }}</div>
                     </div>
-                    <div class="position-absolute bottom-0 start-0 w-100 bg-warning" style="height: 3px;"></div>
+                    <div class="stats-icon warning">
+                        <i class="bi bi-clock"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 overflow-hidden">
-                <div class="card-body position-relative">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted mb-2 small fw-medium">Masih Aman</p>
-                            <h2 class="fw-bold mb-0 text-success">{{ $safeItems ?? 0 }}</h2>
-                            <small class="text-muted">>7 hari</small>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stats-label">
+                            <span class="stats-bullet danger"></span>
+                            Harus Maintenance
                         </div>
-                        <div class="bg-success bg-opacity-10 rounded-3 p-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-success" viewBox="0 0 16 16">
-                                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
-                            </svg>
-                        </div>
+                        <div class="stats-value text-danger">{{ $maintenanceNow ?? 0 }}</div>
                     </div>
-                    <div class="position-absolute bottom-0 start-0 w-100 bg-success" style="height: 3px;"></div>
+                    <div class="stats-icon danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Tables Section -->
-    <div class="row g-4">
-        <!-- Harus Maintenance -->
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 pt-4 pb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-danger bg-opacity-10 rounded-3 p-2 me-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="text-danger" viewBox="0 0 16 16">
-                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">Harus Maintenance Segera</h5>
-                            <small class="text-muted">Perangkat yang sudah melewati tanggal maintenance</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="px-4 py-3 border-0 text-muted small fw-semibold">#</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Kode</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Nama Perangkat</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Kategori</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Ruangan</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Lantai</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Tanggal Maintenance</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($maintenanceList as $item)
-                                    <tr>
-                                        <td class="px-4 align-middle">{{ $loop->iteration }}</td>
-                                        <td class="align-middle"><span class="badge bg-light text-dark border">{{ $item->code }}</span></td>
-                                        <td class="align-middle fw-medium">{{ $item->name }}</td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border-0">
-                                                {{ $item->category->name ?? '-' }}
-                                            </span>
-                                        </td>
-                                        <td class="align-middle">{{ $item->room ?? '-' }}</td>
-                                        <td class="align-middle">{{ $item->floor ?? '-' }}</td>
-                                        <td class="align-middle">{{ \Carbon\Carbon::parse($item->replacement_date)->isoFormat('D MMM YYYY') }}</td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-danger">
-                                                <i class="bi bi-exclamation-circle me-1"></i>Urgent
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-5">
-                                            <div class="text-muted">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="mb-3 opacity-25" viewBox="0 0 16 16">
-                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                                                </svg>
-                                                <p class="mb-0">Tidak ada perangkat yang harus maintenance</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Table Card with Tabs -->
+    <div class="table-card">
+        <!-- Helper PHP untuk append tab ke URL -->
+        @php
+            function appendTab($url, $tab) {
+                if (!$url) return '#';
+                $separator = strpos($url, '?') !== false ? '&' : '?';
+                return $url . $separator . 'tab=' . $tab;
+            }
+        @endphp
 
-        <!-- Hampir Maintenance -->
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 pt-4 pb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-warning bg-opacity-10 rounded-3 p-2 me-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="text-warning" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">Hampir Maintenance</h5>
-                            <small class="text-muted">Perangkat yang akan maintenance dalam 7 hari ke depan</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="px-4 py-3 border-0 text-muted small fw-semibold">#</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Kode</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Nama Perangkat</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Kategori</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Ruangan</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Lantai</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Tanggal Maintenance</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Sisa Waktu</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($soonList as $item)
-                                    @php
-                                        $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->replacement_date), false);
-                                    @endphp
-                                    <tr>
-                                        <td class="px-4 align-middle">{{ $loop->iteration }}</td>
-                                        <td class="align-middle"><span class="badge bg-light text-dark border">{{ $item->code }}</span></td>
-                                        <td class="align-middle fw-medium">{{ $item->name }}</td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border-0">
-                                                {{ $item->category->name ?? '-' }}
-                                            </span>
-                                        </td>
-                                        <td class="align-middle">{{ $item->room ?? '-' }}</td>
-                                        <td class="align-middle">{{ $item->floor ?? '-' }}</td>
-                                        <td class="align-middle">{{ \Carbon\Carbon::parse($item->replacement_date)->isoFormat('D MMM YYYY') }}</td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-warning">
-                                                <i class="bi bi-clock me-1"></i>{{ $daysLeft }} hari lagi
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-5">
-                                            <div class="text-muted">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="mb-3 opacity-25" viewBox="0 0 16 16">
-                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                                                </svg>
-                                                <p class="mb-0">Tidak ada perangkat yang hampir maintenance</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Tabs -->
+        <ul class="nav custom-tabs" id="maintenanceTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="custom-tab {{ $activeTab === 'all' ? 'active' : '' }}" 
+                        id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                    Lainnya
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="custom-tab {{ $activeTab === 'safe' ? 'active' : '' }}" 
+                        id="safe-tab" data-bs-toggle="tab" data-bs-target="#safe" type="button" role="tab">
+                    Masih Aman
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="custom-tab {{ $activeTab === 'soon' ? 'active' : '' }}" 
+                        id="soon-tab" data-bs-toggle="tab" data-bs-target="#soon" type="button" role="tab">
+                    Hampir Maintenance
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="custom-tab {{ $activeTab === 'maintenance' ? 'active' : '' }}" 
+                        id="urgent-tab" data-bs-toggle="tab" data-bs-target="#urgent" type="button" role="tab">
+                    Harus Maintenance
+                </button>
+            </li>
+        </ul>
 
-        <!-- Masih Aman -->
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 pt-4 pb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-success bg-opacity-10 rounded-3 p-2 me-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="text-success" viewBox="0 0 16 16">
-                                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">Masih Aman</h5>
-                            <small class="text-muted">Perangkat dengan tanggal maintenance lebih dari 7 hari</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="bg-light">
+        <div class="tab-content">
+
+            <!-- All Tab -->
+            <div class="tab-pane fade {{ $activeTab === 'all' ? 'show active' : '' }}" id="all" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Kategori</th>
+                                <th>Lantai</th>
+                                <th>Ruang</th>
+                                <th>Tanggal Pasang</th>
+                                <th>Tanggal Maintenance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($allItems as $item)
+                                @php
+                                    $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->replacement_date), false);
+                                    if ($daysLeft < 0) {
+                                        $statusClass = 'danger';
+                                        $statusText = 'Harus Maintenance';
+                                    } elseif ($daysLeft <= 7) {
+                                        $statusClass = 'warning';
+                                        $statusText = 'Hampir Maintenance';
+                                    } else {
+                                        $statusClass = 'success';
+                                        $statusText = 'Masih Aman';
+                                    }
+                                @endphp
                                 <tr>
-                                    <th class="px-4 py-3 border-0 text-muted small fw-semibold">#</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Kode</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Nama Perangkat</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Kategori</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Ruangan</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Lantai</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Tanggal Maintenance</th>
-                                    <th class="py-3 border-0 text-muted small fw-semibold">Sisa Waktu</th>
+                                    <td>{{ $item->code }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->floor ?? '-' }}</td>
+                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
+                                    <td><span class="badge-status {{ $statusClass }}">{{ $statusText }}</span></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($safeList as $item)
-                                    @php
-                                        $daysLeft = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($item->replacement_date), false);
-                                    @endphp
-                                    <tr>
-                                        <td class="px-4 align-middle">{{ $loop->iteration }}</td>
-                                        <td class="align-middle"><span class="badge bg-light text-dark border">{{ $item->code }}</span></td>
-                                        <td class="align-middle fw-medium">{{ $item->name }}</td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border-0">
-                                                {{ $item->category->name ?? '-' }}
-                                            </span>
-                                        </td>
-                                        <td class="align-middle">{{ $item->room ?? '-' }}</td>
-                                        <td class="align-middle">{{ $item->floor ?? '-' }}</td>
-                                        <td class="align-middle">{{ \Carbon\Carbon::parse($item->replacement_date)->isoFormat('D MMM YYYY') }}</td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-check-circle me-1"></i>{{ $daysLeft }} hari
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-5">
-                                            <div class="text-muted">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="mb-3 opacity-25" viewBox="0 0 16 16">
-                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                                                </svg>
-                                                <p class="mb-0">Semua perangkat sudah terjadwal dengan baik</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">Tidak ada data</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="table-footer d-flex justify-content-between align-items-center">
+                    <small class="pagination-info">
+                        Menampilkan {{ $allItems->firstItem() ?? 0 }} - {{ $allItems->lastItem() ?? 0 }} dari {{ $allItems->total() ?? 0 }} data
+                    </small>
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item {{ $allItems->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ appendTab($allItems->previousPageUrl(), 'all') }}">Sebelumnya</a>
+                            </li>
+                            @foreach ($allItems->getUrlRange(1, $allItems->lastPage()) as $page => $url)
+                                <li class="page-item {{ $allItems->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ appendTab($url, 'all') }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+                            <li class="page-item {{ $allItems->hasMorePages() ? '' : 'disabled' }}">
+                                <a class="page-link" href="{{ appendTab($allItems->nextPageUrl(), 'all') }}">Berikutnya</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
+
+            <!-- Safe Tab -->
+            <div class="tab-pane fade {{ $activeTab === 'safe' ? 'show active' : '' }}" id="safe" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Kategori</th>
+                                <th>Lantai</th>
+                                <th>Ruang</th>
+                                <th>Tanggal Pasang</th>
+                                <th>Tanggal Maintenance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($safeList as $item)
+                                <tr>
+                                    <td>{{ $item->code }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->floor ?? '-' }}</td>
+                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
+                                    <td><span class="badge-status success">Masih Aman</span></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">Tidak ada data</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="table-footer d-flex justify-content-between align-items-center">
+                    <small class="pagination-info">
+                        Menampilkan {{ $safeList->firstItem() ?? 0 }} - {{ $safeList->lastItem() ?? 0 }} dari {{ $safeList->total() ?? 0 }} data
+                    </small>
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item {{ $safeList->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ appendTab($safeList->previousPageUrl(), 'safe') }}">Sebelumnya</a>
+                            </li>
+                            @foreach ($safeList->getUrlRange(1, $safeList->lastPage()) as $page => $url)
+                                <li class="page-item {{ $safeList->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ appendTab($url, 'safe') }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+                            <li class="page-item {{ $safeList->hasMorePages() ? '' : 'disabled' }}">
+                                <a class="page-link" href="{{ appendTab($safeList->nextPageUrl(), 'safe') }}">Berikutnya</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Soon Tab -->
+            <div class="tab-pane fade {{ $activeTab === 'soon' ? 'show active' : '' }}" id="soon" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Kategori</th>
+                                <th>Lantai</th>
+                                <th>Ruang</th>
+                                <th>Tanggal Pasang</th>
+                                <th>Tanggal Maintenance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($soonList as $item)
+                                <tr>
+                                    <td>{{ $item->code }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->floor ?? '-' }}</td>
+                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
+                                    <td><span class="badge-status warning">Hampir Maintenance</span></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">Tidak ada data</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="table-footer d-flex justify-content-between align-items-center">
+                    <small class="pagination-info">
+                        Menampilkan {{ $soonList->firstItem() ?? 0 }} - {{ $soonList->lastItem() ?? 0 }} dari {{ $soonList->total() ?? 0 }} data
+                    </small>
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item {{ $soonList->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ appendTab($soonList->previousPageUrl(), 'soon') }}">Sebelumnya</a>
+                            </li>
+                            @foreach ($soonList->getUrlRange(1, $soonList->lastPage()) as $page => $url)
+                                <li class="page-item {{ $soonList->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ appendTab($url, 'soon') }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+                            <li class="page-item {{ $soonList->hasMorePages() ? '' : 'disabled' }}">
+                                <a class="page-link" href="{{ appendTab($soonList->nextPageUrl(), 'soon') }}">Berikutnya</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Urgent Tab -->
+            <div class="tab-pane fade {{ $activeTab === 'maintenance' ? 'show active' : '' }}" id="urgent" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Kategori</th>
+                                <th>Lantai</th>
+                                <th>Ruang</th>
+                                <th>Tanggal Pasang</th>
+                                <th>Tanggal Maintenance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($maintenanceList as $item)
+                                <tr>
+                                    <td>{{ $item->code }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->floor ?? '-' }}</td>
+                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
+                                    <td><span class="badge-status danger">Harus Maintenance</span></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">Tidak ada data</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="table-footer d-flex justify-content-between align-items-center">
+                    <small class="pagination-info">
+                        Menampilkan {{ $maintenanceList->firstItem() ?? 0 }} - {{ $maintenanceList->lastItem() ?? 0 }} dari {{ $maintenanceList->total() ?? 0 }} data
+                    </small>
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item {{ $maintenanceList->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ appendTab($maintenanceList->previousPageUrl(), 'maintenance') }}">Sebelumnya</a>
+                            </li>
+                            @foreach ($maintenanceList->getUrlRange(1, $maintenanceList->lastPage()) as $page => $url)
+                                <li class="page-item {{ $maintenanceList->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ appendTab($url, 'maintenance') }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+                            <li class="page-item {{ $maintenanceList->hasMorePages() ? '' : 'disabled' }}">
+                                <a class="page-link" href="{{ appendTab($maintenanceList->nextPageUrl(), 'maintenance') }}">Berikutnya</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+ 
+
+
+<style>
+
+    /* Warna Khusus Tiap Tab */
+#safe-tab.active {
+    color: #10b981; /* hijau */
+    border-bottom-color: #10b981;
+}
+
+#soon-tab.active {
+    color: #f59e0b; /* kuning */
+    border-bottom-color: #f59e0b;
+}
+
+#urgent-tab.active {
+    color: #ef4444; /* merah */
+    border-bottom-color: #ef4444;
+}
+
+#all-tab.active {
+    color: #2D4194; /* biru default */
+    border-bottom-color: #2D4194;
+}
+
+/* Stats Cards */
+.stats-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
+}
+.stats-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.stats-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.75rem;
+}
+.stats-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.stats-bullet.primary { background: #2D4194; }
+.stats-bullet.success { background: #10b981; }
+.stats-bullet.warning { background: #f59e0b; }
+.stats-bullet.danger { background: #ef4444; }
+
+.stats-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+.stats-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+.stats-icon.primary {
+    background: #eff6ff;
+    color: #2D4194;
+}
+.stats-icon.success {
+    background: #d1fae5;
+    color: #10b981;
+}
+.stats-icon.warning {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+.stats-icon.danger {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+/* Table Card */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+/* Tabs */
+.custom-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0 1.5rem;
+    background: #fafbfc;
+    margin-bottom: 0;
+}
+.custom-tab {
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.custom-tab:hover {
+    color: #2D4194;
+}
+.custom-tab.active {
+    color: #2D4194;
+    border-bottom-color: #2D4194;
+}
+
+/* Table */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.custom-table thead th {
+    background: #fafbfc;
+    padding: 0.875rem 1.5rem;
+    text-align: left;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    border-bottom: 1px solid #e5e7eb;
+}
+.custom-table tbody td {
+    padding: 1rem 1.5rem;
+    font-size: 0.875rem;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+}
+.custom-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+/* Badges */
+.badge-code {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-family: 'Monaco', monospace;
+}
+.badge-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #f3f4f6;
+    color: #6b7280;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+.badge-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+.badge-status.success {
+    background: #d1fae5;
+    color: #065f46;
+}
+.badge-status.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+.badge-status.danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Pagination */
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    background: #fafbfc;
+}
+.pagination-info {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+.pagination {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.page-item {
+    display: flex;
+}
+.page-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.page-link:hover {
+    background: #f9fafb;
+    color: #2D4194;
+}
+.page-item.active .page-link {
+    background: #2D4194;
+    color: white;
+    border-color: #2D4194;
+}
+.page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>
 @endsection

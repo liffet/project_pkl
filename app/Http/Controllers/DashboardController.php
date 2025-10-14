@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Item;
+use App\Models\DamageReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Item;
 
 class DashboardController extends Controller
 {
@@ -13,40 +15,48 @@ class DashboardController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
-        // Jumlah total perangkat
+        // Tab aktif dari query string, default 'all'
+        $activeTab = $request->query('tab', 'all');
+
+        // Page saat ini dari query string, default 1
+        $page = $request->query('page', 1);
+
+        $perPage = 10;
+
+        $today = Carbon::today();
+
+        // Statistik
         $totalItems = Item::count();
+        $maintenanceNow = Item::whereDate('replacement_date', '<', $today)->count();
+        $soonMaintenance = Item::whereDate('replacement_date', '>=', $today)
+            ->whereDate('replacement_date', '<=', $today->copy()->addDays(7))
+            ->count();
+        $safeItems = Item::whereDate('replacement_date', '>', $today->copy()->addDays(7))->count();
 
-        // Perangkat yang sudah lewat replacement_date (harus maintenance)
-        $maintenanceNow = Item::whereDate('replacement_date', '<', now())->count();
+        // Pagination dengan override page sesuai tab aktif
+        $allItems = Item::with('category')
+            ->orderBy('replacement_date', 'asc')
+            ->paginate($perPage, ['*'], 'page', $activeTab === 'all' ? $page : 1);
 
-        // Perangkat yang akan maintenance dalam 7 hari ke depan
-        $soonMaintenance = Item::whereDate('replacement_date', '>=', now())
-                               ->whereDate('replacement_date', '<=', now()->addDays(7))
-                               ->count();
+        $safeList = Item::whereDate('replacement_date', '>', $today->copy()->addDays(7))
+            ->with('category')
+            ->orderBy('replacement_date', 'asc')
+            ->paginate($perPage, ['*'], 'page', $activeTab === 'safe' ? $page : 1);
 
-        // Perangkat yang masih aman (lebih dari 7 hari dari sekarang)
-        $safeItems = Item::whereDate('replacement_date', '>', now()->addDays(7))->count();
+        $soonList = Item::whereDate('replacement_date', '>=', $today)
+            ->whereDate('replacement_date', '<=', $today->copy()->addDays(7))
+            ->with('category')
+            ->orderBy('replacement_date', 'asc')
+            ->paginate($perPage, ['*'], 'page', $activeTab === 'soon' ? $page : 1);
 
-        // Daftar item untuk tabel
-        $maintenanceList = Item::whereDate('replacement_date', '<', now())
-                               ->with('category')
-                               ->orderBy('replacement_date', 'asc')
-                               ->get();
-
-        $soonList = Item::whereDate('replacement_date', '>=', now())
-                        ->whereDate('replacement_date', '<=', now()->addDays(7))
-                        ->with('category')
-                        ->orderBy('replacement_date', 'asc')
-                        ->get();
-
-        $safeList = Item::whereDate('replacement_date', '>', now()->addDays(7))
-                        ->with('category')
-                        ->orderBy('replacement_date', 'asc')
-                        ->get();
+        $maintenanceList = Item::whereDate('replacement_date', '<', $today)
+            ->with('category')
+            ->orderBy('replacement_date', 'asc')
+            ->paginate($perPage, ['*'], 'page', $activeTab === 'maintenance' ? $page : 1);
 
         return view('dashboard', compact(
             'user',
@@ -56,7 +66,52 @@ class DashboardController extends Controller
             'safeItems',
             'maintenanceList',
             'soonList',
-            'safeList'
+            'safeList',
+            'allItems',
+            'activeTab'
+        ));
+    }
+
+    public function report()
+    {
+        $reports = DamageReport::with(['user', 'category'])
+            ->latest()
+            ->paginate(10);
+
+        $totalReports = DamageReport::count();
+        $pendingReports = DamageReport::where('status', 'pending')->count();
+        $acceptedReports = DamageReport::where('status', 'accepted')->count();
+        $rejectedReports = DamageReport::where('status', 'rejected')->count();
+
+        return view('reports.index', compact(
+            'reports',
+            'totalReports',
+            'pendingReports',
+            'acceptedReports',
+            'rejectedReports'
+        ));
+    }
+
+    public function item()
+    {
+        $items = Item::with('category')
+            ->latest()
+            ->paginate(10);
+
+        // Statistik
+        $totalItems = Item::count();
+        $activeItems = Item::where('status', 'active')->count();
+        $inactiveItems = Item::where('status', 'inactive')->count();
+
+        // Hitung perangkat yang perlu maintenance (replacement_date sudah lewat atau dalam 7 hari)
+        $needMaintenance = Item::where('replacement_date', '<=', now()->addDays(7))->count();
+
+        return view('items.index', compact(
+            'items',
+            'totalItems',
+            'activeItems',
+            'inactiveItems',
+            'needMaintenance'
         ));
     }
 }

@@ -60,47 +60,61 @@ class AuthController extends Controller
 
     // Logout
     public function logout(Request $request)
-{
-    Auth::logout();
+    {
+        Auth::logout();
 
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    return redirect('/'); // arahkan ke halaman utama
-}
-
-          
-
-    public function registerWeb(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|unique:users',
-        'password' => 'required|string|min:6',
-    ]);
-
-    User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => 'user',
-    ]);
-
-    return redirect('/login')->with('success', 'Registrasi berhasil, silakan login.');
-}
-
-public function loginWeb(Request $request)
-{
-    $credentials = $request->only('email', 'password');
-
-    if (auth()->attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect('/dashboard'); // bikin halaman dashboard setelah login
+        return redirect('/login'); // arahkan ke halaman utama
     }
 
-    return back()->withErrors([
-        'email' => 'Email atau password salah.',
-    ]);
-}
 
+
+    public function registerWeb(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|min:6',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'name.string' => 'Nama harus berupa teks.',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+
+            'email.required' => 'Email wajib diisi.',
+            'email.string' => 'Email harus berupa teks.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan, silakan pilih email lain.',
+
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.string' => 'Kata sandi harus berupa teks.',
+            'password.min' => 'Kata sandi minimal 6 karakter.',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'user',
+        ]);
+
+        // Langsung arahkan ke login + pesan sukses
+        return redirect('/login')->with('success', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
+    }
+
+
+    public function loginWeb(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (auth()->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect('/dashboard'); // bikin halaman dashboard setelah login
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
+    }
 }
