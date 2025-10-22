@@ -94,6 +94,31 @@
         </div>
     </div>
 
+    <!-- Filter Section -->
+    <div class="mb-3">
+        <form method="GET" action="{{ route('items.index') }}" class="filter-form">
+            <div class="d-flex gap-2 align-items-center">
+                <label class="text-muted small mb-0 fw-medium">
+                    <i class="bi bi-funnel"></i> Filter Kategori:
+                </label>
+                <select name="category_id" class="form-select form-select-sm" style="width: auto; min-width: 250px;" onchange="this.form.submit()">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                
+                @if(request('category_id'))
+                    <a href="{{ route('items.index') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Reset Filter
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
     <!-- Table Card -->
     <div class="table-card">
         <div class="table-responsive">
@@ -129,8 +154,8 @@
                                     <span class="badge-status warning">Tidak Aktif</span>
                                 @endif
                             </td>
-                            <td>{{ $item->room ?? '-' }}</td>
-                            <td>{{ $item->floor ?? '-' }}</td>
+                            <td>{{$item->room->name }}</td>
+                            <td>{{$item->floor->name}}</td>
                             <td>{{ \Carbon\Carbon::parse($item->install_date)->format('d-m-Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
                             <td>
@@ -164,7 +189,13 @@
                         <tr>
                             <td colspan="10" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
-                                <p class="mt-2 mb-0">Tidak ada data perangkat</p>
+                                <p class="mt-2 mb-0">
+                                    @if(request('category_id'))
+                                        Tidak ada perangkat untuk kategori ini
+                                    @else
+                                        Tidak ada data perangkat
+                                    @endif
+                                </p>
                             </td>
                         </tr>
                     @endforelse
@@ -285,6 +316,28 @@
     color: white;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(45, 65, 148, 0.3);
+}
+
+/* Filter Form */
+.filter-form {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.form-select-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
+}
+
+.form-select-sm:focus {
+    border-color: #2D4194;
+    box-shadow: 0 0 0 3px rgba(45, 65, 148, 0.1);
+    outline: none;
 }
 
 /* Table Card */

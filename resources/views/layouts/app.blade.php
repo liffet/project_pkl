@@ -656,22 +656,43 @@
         </div>
 
         <div class="sidebar-section">
-            <div class="sidebar-section-title">Management</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a href="{{ route('items.index') }}" class="sidebar-menu-link {{ request()->routeIs('items.*') ? 'active' : '' }}">
-                        <i class="bi bi-hdd-rack sidebar-menu-icon"></i>
-                        <span>Perangkat</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="{{ route('categories.index') }}" class="sidebar-menu-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                        <i class="bi bi-folder sidebar-menu-icon"></i>
-                        <span>Kategori</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <div class="sidebar-section-title">Management</div>
+    <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+            <a href="{{ route('items.index') }}" 
+               class="sidebar-menu-link {{ request()->routeIs('items.*') ? 'active' : '' }}">
+                <i class="bi bi-hdd-rack sidebar-menu-icon"></i>
+                <span>Perangkat</span>
+            </a>
+        </li>
+
+        <li class="sidebar-menu-item">
+            <a href="{{ route('categories.index') }}" 
+               class="sidebar-menu-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                <i class="bi bi-folder sidebar-menu-icon"></i>
+                <span>Kategori</span>
+            </a>
+        </li>
+
+        <!-- Tambahan untuk Floor -->
+        <li class="sidebar-menu-item">
+            <a href="{{ route('floors.index') }}" 
+               class="sidebar-menu-link {{ request()->routeIs('floors.*') ? 'active' : '' }}">
+                <i class="bi bi-building sidebar-menu-icon"></i>
+                <span>Lantai</span>
+            </a>
+        </li>
+
+        <!-- Tambahan untuk Room -->
+        <li class="sidebar-menu-item">
+            <a href="{{ route('rooms.index') }}" 
+               class="sidebar-menu-link {{ request()->routeIs('rooms.*') ? 'active' : '' }}">
+                <i class="bi bi-door-open sidebar-menu-icon"></i>
+                <span>Ruangan</span>
+            </a>
+        </li>
+    </ul>
+</div>
 
         <div class="sidebar-section">
             <div class="sidebar-section-title">Pengaturan</div>

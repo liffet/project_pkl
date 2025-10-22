@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Item;
+use App\Models\Category;
 use App\Models\DamageReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -92,26 +93,33 @@ class DashboardController extends Controller
         ));
     }
 
-    public function item()
-    {
-        $items = Item::with('category')
-            ->latest()
-            ->paginate(10);
+   public function item(Request $request)
+{
+    $categories = Category::all(); // <-- tambahkan ini
 
-        // Statistik
-        $totalItems = Item::count();
-        $activeItems = Item::where('status', 'active')->count();
-        $inactiveItems = Item::where('status', 'inactive')->count();
+    $itemsQuery = Item::with('category')->latest();
 
-        // Hitung perangkat yang perlu maintenance (replacement_date sudah lewat atau dalam 7 hari)
-        $needMaintenance = Item::where('replacement_date', '<=', now()->addDays(7))->count();
-
-        return view('items.index', compact(
-            'items',
-            'totalItems',
-            'activeItems',
-            'inactiveItems',
-            'needMaintenance'
-        ));
+    // Filter kategori jika dipilih
+    if ($request->has('category_id') && $request->category_id) {
+        $itemsQuery->where('category_id', $request->category_id);
     }
+
+    $items = $itemsQuery->paginate(10)->withQueryString();
+
+    // Statistik
+    $totalItems = Item::count();
+    $activeItems = Item::where('status', 'active')->count();
+    $inactiveItems = Item::where('status', 'inactive')->count();
+    $needMaintenance = Item::where('replacement_date', '<=', now()->addDays(7))->count();
+
+    return view('items.index', compact(
+        'items',
+        'categories', // <-- kirim ke view
+        'totalItems',
+        'activeItems',
+        'inactiveItems',
+        'needMaintenance'
+    ));
+}
+
 }

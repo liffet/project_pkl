@@ -32,7 +32,7 @@ class AuthController extends Controller
     }
 
     // Login untuk admin & user
-    public function login(Request $request)
+        public function login(Request $request)
     {
         $request->validate([
             'email'    => 'required|email',
@@ -51,12 +51,17 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message'      => 'Login successful',
-            'access_token' => $token,
-            'token_type'   => 'Bearer',
-            'role'         => $user->role, // supaya Flutter bisa tahu ini admin / user
+            'message' => 'Login successful',
+            'user' => [
+                'id'    => $user->id,
+                'name'  => $user->name,
+                'email' => $user->email,
+                'role'  => $user->role,
+                'token' => $token,
+            ]
         ]);
     }
+
 
     // Logout
     public function logout(Request $request)

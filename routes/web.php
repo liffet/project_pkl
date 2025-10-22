@@ -7,6 +7,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemWebController;
 use App\Http\Controllers\DamageReportController;
+use App\Http\Controllers\FloorController;
+use App\Http\Controllers\RoomController;
+
+
+
 
 
 
@@ -33,11 +38,12 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
-Route::get('/login', function () {
+Route::get('/', function () {
     return view('auth.login');
 })->name('login');
 
-// Aksi Register & Login (POST)
+// Aksi Register & Login (
+// POST)
 Route::post('/register', [AuthController::class, 'registerWeb'])->name('register.web');
 Route::post('/login', [AuthController::class, 'loginWeb'])->name('login.web');
 
@@ -59,3 +65,5 @@ Route::get('/damage-reports', [DashboardController::class, 'report'])->name('dam
 
 Route::get('/items', [DashboardController::class, 'item'])->name('items.index');
 
+Route::resource('floors', FloorController::class);
+Route::resource('rooms', RoomController::class);

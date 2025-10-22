@@ -119,37 +119,38 @@
                                 <span>Lokasi & Jadwal</span>
                             </div>
                             <div class="form-card-body">
-                                <!-- Ruangan -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-building"></i>
-                                        Ruangan
-                                    </label>
-                                    <input type="text"
-                                        name="room"
-                                        class="form-control"
-                                        value="{{ old('room', $item->room) }}"
-                                        placeholder="Contoh: Ruang Pusdatin">
-                                </div>
+                               <!-- Ruangan -->
+<div class="form-group">
+    <label class="form-label">
+        <i class="bi bi-door-open"></i> Ruangan <span class="text-danger">*</span>
+    </label>
+    <select name="room_id" class="form-select" required>
+        <option value="">-- Pilih Ruangan --</option>
+        @foreach($rooms as $room)
+            <option value="{{ $room->id }}" {{ old('room_id') == $room->id ? 'selected' : '' }}>
+                {{ $room->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
 
-                                <!-- Lantai -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-building"></i>
-                                        Lantai
-                                    </label>
-                                    <select name="floor" class="form-select">
-                                        <option value="">-- Pilih Lantai --</option>
-                                        @for ($i = 1; $i <= 25; $i++)
-                                            <option value="Lantai {{ $i }}"
-                                            {{ old('floor', $item->floor) == "Lantai $i" ? 'selected' : '' }}>
-                                            Lantai {{ $i }}
-                                            </option>
-                                            @endfor
-                                    </select>
+<!-- Lantai -->
+<div class="form-group">
+    <label class="form-label">
+        <i class="bi bi-building"></i> Lantai <span class="text-danger">*</span>
+    </label>
+    <select name="floor_id" class="form-select" required>
+        <option value="">-- Pilih Lantai --</option>
+        @foreach($floors as $floor)
+            <option value="{{ $floor->id }}" {{ old('floor_id') == $floor->id ? 'selected' : '' }}>
+                {{ $floor->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+    
 
 
-                                </div>
 
                                 <!-- Tanggal Pasang -->
                                 <div class="form-group">

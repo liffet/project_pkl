@@ -49,7 +49,7 @@
 
             <!-- Tombol Tab -->
             <div class="flex border border-gray-300 rounded-xl overflow-hidden mb-8 text-xs w-8/12 mx-auto">
-                <a href="/login"
+                <a href="/"
                     class="flex-1 h-10 flex items-center justify-center font-medium bg-white text-gray-700 hover:bg-gray-100 transition">
                     Masuk
                 </a>
@@ -70,7 +70,7 @@
 
             <!-- Form Register -->
             <form method="POST" action="{{ route('register.web') }}" class="space-y-5 -mt-2">
-                @csrf
+                @csrf   
 
                 <!-- Nama -->
                 <div class="w-4/5 mx-auto">

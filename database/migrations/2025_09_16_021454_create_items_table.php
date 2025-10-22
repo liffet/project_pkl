@@ -13,11 +13,18 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+
+            // relasi ke tabel kategori
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
+
+            // relasi ke tabel lantai
+            $table->foreignId('floor_id')->constrained('floors')->onDelete('cascade');
+
+            // relasi ke tabel ruangan
+            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
+
             $table->string('code')->unique(); // kode unik (nomor resi/barang)
             $table->string('name');
-            $table->string('room')->nullable(); // nama ruangan
-            $table->string('floor')->nullable(); // lantai
             $table->enum('status', ['active', 'inactive'])->default('active'); // status perangkat
             $table->date('install_date');
             $table->date('replacement_date');

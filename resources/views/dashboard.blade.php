@@ -159,8 +159,8 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
-                                    <td>{{ $item->floor ?? '-' }}</td>
-                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ $item->floor->name ?? '-' }}</td>
+                                    <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
                                     <td><span class="badge-status {{ $statusClass }}">{{ $statusText }}</span></td>
@@ -219,8 +219,8 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
-                                    <td>{{ $item->floor ?? '-' }}</td>
-                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ $item->floor->name ?? '-' }}</td>
+                                    <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
                                     <td><span class="badge-status success">Masih Aman</span></td>
@@ -279,8 +279,8 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
-                                    <td>{{ $item->floor ?? '-' }}</td>
-                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ $item->floor->name ?? '-' }}</td>
+                                    <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
                                     <td><span class="badge-status warning">Hampir Maintenance</span></td>
@@ -339,8 +339,8 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
-                                    <td>{{ $item->floor ?? '-' }}</td>
-                                    <td>{{ $item->room ?? '-' }}</td>
+                                    <td>{{ $item->floor->name ?? '-' }}</td>
+                                    <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
                                     <td><span class="badge-status danger">Harus Maintenance</span></td>

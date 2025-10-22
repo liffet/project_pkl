@@ -11,12 +11,12 @@ class Item extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category_id',
-        'code',
         'name',
-        'room',
-        'floor',
-        'status',            // ✅ Tambahkan ini
+        'code',
+        'category_id',
+        'room_id',      // Ubah dari 'room' menjadi 'room_id'
+        'floor_id',     // Ubah dari 'floor' menjadi 'floor_id'
+        'status',
         'install_date',
         'replacement_date',
         'photo',
@@ -27,19 +27,33 @@ class Item extends Model
         parent::boot();
 
         static::creating(function ($item) {
-            // Jika belum ada kode, generate otomatis
+            // Generate kode otomatis jika belum ada
             if (empty($item->code)) {
                 $item->code = 'ITM-' . strtoupper(Str::random(8));
             }
-            // Jika belum ada status, default active
+
+            // Default status "active" jika belum diisi
             if (empty($item->status)) {
                 $item->status = 'active';
             }
         });
     }
 
+    // Relasi ke kategori
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    // Relasi ke ruangan
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
+    // Relasi ke lantai
+    public function floor()
+    {
+        return $this->belongsTo(Floor::class);
     }
 }
