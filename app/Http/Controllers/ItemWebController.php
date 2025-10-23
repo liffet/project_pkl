@@ -36,35 +36,52 @@ class ItemWebController extends Controller
     // ============================
     public function index(Request $request)
     {
-        // Ambil semua kategori untuk dropdown filter
         $categories = Category::all();
+        $rooms = Room::all();
+        $floors = Floor::all();
 
-        // Query items
         $itemsQuery = Item::with(['category', 'room', 'floor'])->latest();
 
-        // Filter kategori jika ada
-        if ($request->has('category_id') && $request->category_id) {
+        if ($request->filled('item_name')) {
+            $itemsQuery->where('name', 'like', '%' . $request->item_name . '%');
+        }
+
+        if ($request->filled('category_id')) {
             $itemsQuery->where('category_id', $request->category_id);
         }
 
-        // Pagination 10 per halaman
+        if ($request->filled('status')) {
+            $itemsQuery->where('status', $request->status);
+        }
+
+        if ($request->filled('room_id')) {
+            $itemsQuery->where('room_id', $request->room_id);
+        }
+
+        if ($request->filled('floor_id')) {
+            $itemsQuery->where('floor_id', $request->floor_id);
+        }
+
         $items = $itemsQuery->paginate(10)->withQueryString();
 
-        // Statistik (opsional)
+        // Statistik
         $totalItems = Item::count();
         $activeItems = Item::where('status', 'active')->count();
         $inactiveItems = Item::where('status', 'inactive')->count();
-        $needMaintenance = Item::where('status', 'maintenance')->count();
+        $needMaintenance = Item::whereDate('replacement_date', '<', now())->count(); // ✅ perbaikan di sini
 
         return view('items.index', compact(
             'items',
             'categories',
+            'rooms',
+            'floors',
             'totalItems',
             'activeItems',
             'inactiveItems',
             'needMaintenance'
         ));
     }
+
 
     // ============================
     // ➕ CREATE FORM
@@ -95,7 +112,14 @@ class ItemWebController extends Controller
         ]);
 
         $data = $request->only([
-            'category_id','room_id','floor_id','code','name','status','install_date','replacement_date'
+            'category_id',
+            'room_id',
+            'floor_id',
+            'code',
+            'name',
+            'status',
+            'install_date',
+            'replacement_date'
         ]);
 
         $data['code'] = $data['code'] ?? 'ITM-' . strtoupper(Str::random(8));
@@ -118,7 +142,7 @@ class ItemWebController extends Controller
         $categories = Category::all();
         $rooms = Room::all();
         $floors = Floor::all();
-        return view('items.edit', compact('item','categories','rooms','floors'));
+        return view('items.edit', compact('item', 'categories', 'rooms', 'floors'));
     }
 
     // ============================
@@ -140,7 +164,13 @@ class ItemWebController extends Controller
         ]);
 
         $data = $request->only([
-            'category_id','room_id','floor_id','name','status','install_date','replacement_date'
+            'category_id',
+            'room_id',
+            'floor_id',
+            'name',
+            'status',
+            'install_date',
+            'replacement_date'
         ]);
 
         if ($request->hasFile('photo')) {
@@ -159,7 +189,7 @@ class ItemWebController extends Controller
     {
         $query = $request->input('q');
 
-        $items = Item::with(['category','room','floor'])
+        $items = Item::with(['category', 'room', 'floor'])
             ->where('name', 'like', "%$query%")
             ->orWhere('code', 'like', "%$query%")
             ->orWhereHas('room', fn($q) => $q->where('name', 'like', "%$query%"))
@@ -185,7 +215,7 @@ class ItemWebController extends Controller
     // ============================
     public function show($id)
     {
-        $item = Item::with(['category','room','floor'])->findOrFail($id);
+        $item = Item::with(['category', 'room', 'floor'])->findOrFail($id);
         return view('items.show', compact('item'));
     }
 }

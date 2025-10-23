@@ -10,29 +10,6 @@ use App\Http\Controllers\DamageReportController;
 use App\Http\Controllers\FloorController;
 use App\Http\Controllers\RoomController;
 
-
-
-
-
-
-
-// Route logout manual
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-
-
 // Halaman Register & Login
 Route::get('/register', function () {
     return view('auth.register');
@@ -42,28 +19,29 @@ Route::get('/', function () {
     return view('auth.login');
 })->name('login');
 
-// Aksi Register & Login (
-// POST)
+// Aksi Register & Login
 Route::post('/register', [AuthController::class, 'registerWeb'])->name('register.web');
 Route::post('/login', [AuthController::class, 'loginWeb'])->name('login.web');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Resource routes
+    Route::resource('categories', CategoryController::class);
+    Route::resource('items', ItemWebController::class);  // Ini sudah cukup untuk CRUD + filter
+    Route::resource('floors', FloorController::class);
+    Route::resource('rooms', RoomController::class);
+    Route::resource('damage-reports', DamageReportController::class)->only(['index', 'show', 'update']);
+    
+    // Route tambahan
+    Route::get('/search', [ItemWebController::class, 'search'])->name('items.search');
 });
 
-Route::resource('categories', CategoryController::class);
-
-Route::resource('items', ItemWebController::class);
-
-Route::get('/search', [ItemWebController::class, 'search'])->name('items.search');
-
+// Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::resource('damage-reports', DamageReportController::class)->only(['index', 'show', 'update']);
+// HAPUS ATAU COMMENT BARIS INI - INI YANG BIKIN KONFLIK:
+Route::get('/dashboard/items', [DashboardController::class, 'item'])->name('dashboard.items');
+Route::get('/dashboard/reports', [DashboardController::class, 'report'])->name('dashboard.reports');
 
-Route::get('/damage-reports', [DashboardController::class, 'report'])->name('damage-reports.index');
 
-Route::get('/items', [DashboardController::class, 'item'])->name('items.index');
-
-Route::resource('floors', FloorController::class);
-Route::resource('rooms', RoomController::class);

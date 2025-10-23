@@ -94,29 +94,153 @@
         </div>
     </div>
 
-    <!-- Filter Section -->
+    <!-- Filter Button Section -->
     <div class="mb-3">
-        <form method="GET" action="{{ route('items.index') }}" class="filter-form">
-            <div class="d-flex gap-2 align-items-center">
-                <label class="text-muted small mb-0 fw-medium">
-                    <i class="bi bi-funnel"></i> Filter Kategori:
-                </label>
-                <select name="category_id" class="form-select form-select-sm" style="width: auto; min-width: 250px;" onchange="this.form.submit()">
-                    <option value="">Semua Kategori</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-                
-                @if(request('category_id'))
-                    <a href="{{ route('items.index') }}" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-x-circle"></i> Reset Filter
-                    </a>
+        <div class="d-flex gap-2 align-items-center">
+            <button type="button" class="btn-filter" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="bi bi-funnel"></i>
+                Filter Data
+                @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
+                    <span class="filter-badge">{{ count(array_filter(request()->only(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))) }}</span>
                 @endif
+            </button>
+            
+            @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
+                <a href="{{ route('items.index') }}" class="btn-reset">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Reset Filter
+                </a>
+            @endif
+        </div>
+        
+        @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
+            <div class="active-filters mt-3">
+                <small class="text-muted d-block mb-2"><i class="bi bi-info-circle me-1"></i>Filter Aktif:</small>
+                <div class="d-flex flex-wrap gap-2">
+                    @if(request('item_name'))
+                        <span class="filter-chip">
+                            <i class="bi bi-search"></i> Nama: {{ request('item_name') }}
+                        </span>
+                    @endif
+                    @if(request('category_id'))
+                        <span class="filter-chip">
+                            <i class="bi bi-tags"></i> Kategori: {{ $categories->find(request('category_id'))->name ?? '-' }}
+                        </span>
+                    @endif
+                    @if(request('status'))
+                        <span class="filter-chip">
+                            <i class="bi bi-toggle-on"></i> Status: {{ request('status') == 'active' ? 'Aktif' : 'Tidak Aktif' }}
+                        </span>
+                    @endif
+                    @if(request('room_id'))
+                        <span class="filter-chip">
+                            <i class="bi bi-door-open"></i> Ruangan: {{ $rooms->find(request('room_id'))->name ?? '-' }}
+                        </span>
+                    @endif
+                    @if(request('floor_id'))
+                        <span class="filter-chip">
+                            <i class="bi bi-building"></i> Lantai: {{ $floors->find(request('floor_id'))->name ?? '-' }}
+                        </span>
+                    @endif
+                </div>
             </div>
-        </form>
+        @endif
+    </div>
+
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">
+                        <i class="bi bi-funnel me-2"></i>Filter Data Perangkat
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="GET" action="{{ route('items.index') }}">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- Filter Nama Perangkat -->
+                            <div class="col-md-6">
+                                <label class="form-label-filter">
+                                    <i class="bi bi-search me-1"></i>Nama Perangkat
+                                </label>
+                                <input type="text" 
+                                       name="item_name" 
+                                       class="form-control" 
+                                       placeholder="Cari nama perangkat..."
+                                       value="{{ request('item_name') }}">
+                            </div>
+
+                            <!-- Filter Kategori -->
+                            <div class="col-md-6">
+                                <label class="form-label-filter">
+                                    <i class="bi bi-tags me-1"></i>Kategori
+                                </label>
+                                <select name="category_id" class="form-select">
+                                    <option value="">Semua Kategori</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Filter Status -->
+                            <div class="col-md-4">
+                                <label class="form-label-filter">
+                                    <i class="bi bi-toggle-on me-1"></i>Status
+                                </label>
+                                <select name="status" class="form-select">
+                                    <option value="">Semua Status</option>
+                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Ruangan -->
+                            <div class="col-md-4">
+                                <label class="form-label-filter">
+                                    <i class="bi bi-door-open me-1"></i>Ruangan
+                                </label>
+                                <select name="room_id" class="form-select">
+                                    <option value="">Semua Ruangan</option>
+                                    @foreach($rooms as $room)
+                                        <option value="{{ $room->id }}" {{ request('room_id') == $room->id ? 'selected' : '' }}>
+                                            {{ $room->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Filter Lantai -->
+                            <div class="col-md-4">
+                                <label class="form-label-filter">
+                                    <i class="bi bi-building me-1"></i>Lantai
+                                </label>
+                                <select name="floor_id" class="form-select">
+                                    <option value="">Semua Lantai</option>
+                                    @foreach($floors as $floor)
+                                        <option value="{{ $floor->id }}" {{ request('floor_id') == $floor->id ? 'selected' : '' }}>
+                                            {{ $floor->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-lg me-1"></i>Batal
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Terapkan Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Table Card -->
@@ -190,8 +314,8 @@
                             <td colspan="10" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
                                 <p class="mt-2 mb-0">
-                                    @if(request('category_id'))
-                                        Tidak ada perangkat untuk kategori ini
+                                    @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
+                                        Tidak ada perangkat yang sesuai dengan filter
                                     @else
                                         Tidak ada data perangkat
                                     @endif
@@ -318,26 +442,172 @@
     box-shadow: 0 4px 12px rgba(45, 65, 148, 0.3);
 }
 
-/* Filter Form */
-.filter-form {
+/* Filter Button */
+.btn-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
     background: white;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
+    color: #2D4194;
+    border: 2px solid #2D4194;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+.btn-filter:hover {
+    background: #2D4194;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 65, 148, 0.2);
+}
+
+/* Filter Badge Counter */
+.filter-badge {
+    background: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.125rem 0.5rem;
+    border-radius: 10px;
+    margin-left: 0.25rem;
+}
+
+/* Reset Button */
+.btn-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 2px solid #fecaca;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.btn-reset:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Active Filters Display */
+.active-filters {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
     border: 1px solid #e5e7eb;
 }
 
-.form-select-sm {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
     border-radius: 6px;
-    border: 1px solid #e5e7eb;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.filter-chip i {
+    color: #2D4194;
+    font-size: 0.875rem;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #2D4194 0%, #1e2f6f 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Form Labels in Modal */
+.form-label-filter {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
     transition: all 0.2s;
 }
 
-.form-select-sm:focus {
+.form-control:focus, .form-select:focus {
     border-color: #2D4194;
     box-shadow: 0 0 0 3px rgba(45, 65, 148, 0.1);
     outline: none;
+}
+
+/* Modal Buttons */
+.modal-footer .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-footer .btn-primary {
+    background: #2D4194;
+    border-color: #2D4194;
+}
+
+.modal-footer .btn-primary:hover {
+    background: #1e2f6f;
+    border-color: #1e2f6f;
+}
+
+.modal-footer .btn-secondary {
+    background: #6b7280;
+    border-color: #6b7280;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #4b5563;
+    border-color: #4b5563;
 }
 
 /* Table Card */

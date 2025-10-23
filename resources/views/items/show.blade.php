@@ -68,18 +68,18 @@
                             </div>
 
                             <div class="col-md-6">
-    <div class="info-box">
-        <small class="text-muted"><i class="bi bi-door-open me-1"></i>Ruangan</small>
-        <strong class="d-block mt-1">{{ $item->room->name }}</strong>
-    </div>
-</div>
+                                <div class="info-box">
+                                    <small class="text-muted"><i class="bi bi-door-open me-1"></i>Ruangan</small>
+                                    <strong class="d-block mt-1">{{ $item->room->name }}</strong>
+                                </div>
+                            </div>
 
-<div class="col-md-6">
-    <div class="info-box">
-        <small class="text-muted"><i class="bi bi-building me-1"></i>Lantai</small>
-        <strong class="d-block mt-1">{{ $item->floor?->name }}</strong>
-    </div>
-</div>
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <small class="text-muted"><i class="bi bi-building me-1"></i>Lantai</small>
+                                    <strong class="d-block mt-1">{{ $item->floor?->name }}</strong>
+                                </div>
+                            </div>
 
 
                             <div class="col-md-6">

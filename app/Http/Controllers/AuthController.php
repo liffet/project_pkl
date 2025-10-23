@@ -71,7 +71,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login'); // arahkan ke halaman utama
+        return redirect('/'); // arahkan ke halaman utama
     }
 
 
@@ -105,7 +105,7 @@ class AuthController extends Controller
         ]);
 
         // Langsung arahkan ke login + pesan sukses
-        return redirect('/login')->with('success', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
+        return redirect('/')->with('success', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
     }
 
 

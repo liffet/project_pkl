@@ -578,48 +578,95 @@
             /* merah lebih gelap */
         }
 
+        #logoutModal .modal-content {
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        #logoutModal .modal-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        #logoutModal .modal-header {
+            padding: 1.5rem;
+            background: white !important;
+        }
+
+        #logoutModal .modal-body {
+            padding: 1rem 1.5rem;
+            background: white !important;
+        }
+
+        #logoutModal .modal-footer {
+            padding: 1rem 1.5rem;
+            background: white !important;
+        }
+
+        #logoutModal .btn-outline-secondary {
+            border-radius: 0.6rem;
+            transition: all 0.2s;
+        }
+
+        #logoutModal .btn-outline-secondary:hover {
+            background-color: #f3f4f6;
+            transform: translateY(-1px);
+        }
+
+        #logoutModal .btn-danger {
+            border-radius: 0.6rem;
+            transition: all 0.2s;
+        }
+
+        #logoutModal .btn-danger:hover {
+            background-color: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(185, 28, 28, 0.3);
+        }
+
         .modal-content {
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
 
-.modal-content:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
+        .modal-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
 
-.modal-header {
-    padding: 1rem 1.5rem;
-}
+        .modal-header {
+            padding: 1rem 1.5rem;
+        }
 
-.modal-body {
-    padding: 1rem 1.5rem;
-}
+        .modal-body {
+            padding: 1rem 1.5rem;
+        }
 
-.modal-footer {
-    padding: 1rem 1.5rem;
-}
+        .modal-footer {
+            padding: 1rem 1.5rem;
+        }
 
-.btn-outline-secondary {
-    border-radius: 0.6rem;
-    transition: all 0.2s;
-}
+        .btn-outline-secondary {
+            border-radius: 0.6rem;
+            transition: all 0.2s;
+        }
 
-.btn-outline-secondary:hover {
-    background-color: #f3f4f6;
-    transform: translateY(-1px);
-}
+        .btn-outline-secondary:hover {
+            background-color: #f3f4f6;
+            transform: translateY(-1px);
+        }
 
-.btn-danger {
-    border-radius: 0.6rem;
-    transition: all 0.2s;
-}
+        .btn-danger {
+            border-radius: 0.6rem;
+            transition: all 0.2s;
+        }
 
-.btn-danger:hover {
-    background-color: #b91c1c;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(185, 28, 28, 0.3);
-}
+        .btn-danger:hover {
+            background-color: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(185, 28, 28, 0.3);
+        }
     </style>
 </head>
 
@@ -656,43 +703,44 @@
         </div>
 
         <div class="sidebar-section">
-    <div class="sidebar-section-title">Management</div>
-    <ul class="sidebar-menu">
-        <li class="sidebar-menu-item">
-            <a href="{{ route('items.index') }}" 
-               class="sidebar-menu-link {{ request()->routeIs('items.*') ? 'active' : '' }}">
-                <i class="bi bi-hdd-rack sidebar-menu-icon"></i>
-                <span>Perangkat</span>
-            </a>
-        </li>
+            <div class="sidebar-section-title">Management</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('items.index') }}"
+                        class="sidebar-menu-link {{ request()->routeIs('items.*') ? 'active' : '' }}">
+                        <i class="bi bi-hdd-rack sidebar-menu-icon"></i>
+                        <span>Perangkat</span>
+                    </a>
+                </li>
 
-        <li class="sidebar-menu-item">
-            <a href="{{ route('categories.index') }}" 
-               class="sidebar-menu-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                <i class="bi bi-folder sidebar-menu-icon"></i>
-                <span>Kategori</span>
-            </a>
-        </li>
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('categories.index') }}"
+                        class="sidebar-menu-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                        <i class="bi bi-folder sidebar-menu-icon"></i>
+                        <span>Kategori</span>
+                    </a>
+                </li>
+                
+                <!-- Tambahan untuk Room -->
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('rooms.index') }}"
+                        class="sidebar-menu-link {{ request()->routeIs('rooms.*') ? 'active' : '' }}">
+                        <i class="bi bi-door-open sidebar-menu-icon"></i>
+                        <span>Ruangan</span>
+                    </a>
+                </li>
+                
+                <!-- Tambahan untuk Floor -->
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('floors.index') }}"
+                        class="sidebar-menu-link {{ request()->routeIs('floors.*') ? 'active' : '' }}">
+                        <i class="bi bi-building sidebar-menu-icon"></i>
+                        <span>Lantai</span>
+                    </a>
+                </li>
 
-        <!-- Tambahan untuk Floor -->
-        <li class="sidebar-menu-item">
-            <a href="{{ route('floors.index') }}" 
-               class="sidebar-menu-link {{ request()->routeIs('floors.*') ? 'active' : '' }}">
-                <i class="bi bi-building sidebar-menu-icon"></i>
-                <span>Lantai</span>
-            </a>
-        </li>
-
-        <!-- Tambahan untuk Room -->
-        <li class="sidebar-menu-item">
-            <a href="{{ route('rooms.index') }}" 
-               class="sidebar-menu-link {{ request()->routeIs('rooms.*') ? 'active' : '' }}">
-                <i class="bi bi-door-open sidebar-menu-icon"></i>
-                <span>Ruangan</span>
-            </a>
-        </li>
-    </ul>
-</div>
+            </ul>
+        </div>
 
         <div class="sidebar-section">
             <div class="sidebar-section-title">Pengaturan</div>
@@ -709,40 +757,40 @@
         </div>
     </aside>
 
-  <!-- Modal Konfirmasi Logout -->
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            
-            <!-- Header -->
-            <div class="modal-header border-0 bg-light">
-                <h5 class="modal-title fw-bold text-dark d-flex align-items-center" id="logoutModalLabel">
-                    <i class="bi bi-box-arrow-right text-danger me-2 fs-4"></i>
-                    Konfirmasi Logout
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+    <!-- Modal Konfirmasi Logout -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
 
-            <!-- Body -->
-            <div class="modal-body text-secondary fs-6">
-                Apakah Anda yakin ingin keluar dari akun ini?
-            </div>
+                <!-- Header -->
+                <div class="modal-header border-0 bg-light">
+                    <h5 class="modal-title fw-bold text-dark d-flex align-items-center" id="logoutModalLabel">
+                        <i class="bi bi-box-arrow-right text-danger me-2 fs-4"></i>
+                        Konfirmasi Logout
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-            <!-- Footer -->
-            <div class="modal-footer border-0 d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-outline-secondary px-4 py-2 fw-semibold" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-2"></i>Batal
-                </button>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold d-flex align-items-center">
-                        <i class="bi bi-check-circle me-2"></i>Ya, Keluar
+                <!-- Body -->
+                <div class="modal-body text-secondary fs-6">
+                    Apakah Anda yakin ingin keluar dari akun ini?
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0 d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2 fw-semibold" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Batal
                     </button>
-                </form>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold d-flex align-items-center">
+                            <i class="bi bi-check-circle me-2"></i>Ya, Keluar
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
 

@@ -73,53 +73,53 @@ class DashboardController extends Controller
         ));
     }
 
-    public function report()
-    {
-        $reports = DamageReport::with(['user', 'category'])
-            ->latest()
-            ->paginate(10);
-
-        $totalReports = DamageReport::count();
-        $pendingReports = DamageReport::where('status', 'pending')->count();
-        $acceptedReports = DamageReport::where('status', 'accepted')->count();
-        $rejectedReports = DamageReport::where('status', 'rejected')->count();
-
-        return view('reports.index', compact(
-            'reports',
-            'totalReports',
-            'pendingReports',
-            'acceptedReports',
-            'rejectedReports'
-        ));
-    }
-
-   public function item(Request $request)
+ public function report()
 {
-    $categories = Category::all(); // <-- tambahkan ini
+    $reports = DamageReport::with(['user', 'category'])
+        ->latest()
+        ->paginate(10);
+
+    $totalReports = DamageReport::count();
+    $pendingReports = DamageReport::where('status', 'pending')->count();
+    $acceptedReports = DamageReport::where('status', 'accepted')->count();
+    $rejectedReports = DamageReport::where('status', 'rejected')->count();
+
+    // View bisa diganti agar tidak tumpang tindih dengan DamageReportController
+    return view('dashboard.reports', compact(
+        'reports',
+        'totalReports',
+        'pendingReports',
+        'acceptedReports',
+        'rejectedReports'
+    ));
+}
+
+
+ public function item(Request $request)
+{
+    $categories = Category::all();
 
     $itemsQuery = Item::with('category')->latest();
 
-    // Filter kategori jika dipilih
     if ($request->has('category_id') && $request->category_id) {
         $itemsQuery->where('category_id', $request->category_id);
     }
 
     $items = $itemsQuery->paginate(10)->withQueryString();
 
-    // Statistik
     $totalItems = Item::count();
     $activeItems = Item::where('status', 'active')->count();
     $inactiveItems = Item::where('status', 'inactive')->count();
     $needMaintenance = Item::where('replacement_date', '<=', now()->addDays(7))->count();
 
-    return view('items.index', compact(
+    // View diganti agar tidak bentrok
+    return view('dashboard.items', compact(
         'items',
-        'categories', // <-- kirim ke view
+        'categories',
         'totalItems',
         'activeItems',
         'inactiveItems',
         'needMaintenance'
     ));
 }
-
 }
