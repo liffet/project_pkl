@@ -10,11 +10,19 @@ return new class extends Migration
     {
         Schema::create('damage_reports', function (Blueprint $table) {
             $table->id();
+            
+            // Pelapor
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->string('device');
+            
+            // Item yang dilaporkan rusak
+            $table->foreignId('item_id')->constrained('items')->onDelete('cascade');
+            
+            // Alasan kerusakan
             $table->text('reason');
+            
+            // Status: pending / accepted / rejected
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+            
             $table->timestamps();
         });
     }

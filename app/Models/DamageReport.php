@@ -11,21 +11,36 @@ class DamageReport extends Model
 
     protected $fillable = [
         'user_id',
-        'device',
-        'category_id',
+        'item_id',
         'reason',
         'status',
     ];
 
-    // Relasi ke user (pelapor)
+    /**
+     * 🔹 Relasi ke User (pelapor)
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi ke kategori barang
-    public function category()
+    /**
+     * 🔹 Relasi ke Item yang dilaporkan rusak
+     */
+    public function item()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Item::class, 'item_id');
+    }
+
+    /**
+     * 🔹 Helper untuk menampilkan label status
+     */
+    public function getStatusLabelAttribute()
+    {
+        return match($this->status) {
+            'accepted' => 'Diterima',
+            'rejected' => 'Ditolak',
+            default => 'Pending',
+        };
     }
 }

@@ -13,29 +13,29 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6',
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'user', // default selalu user
+            'role' => 'user', // default selalu user
         ]);
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user'    => $user
+            'user' => $user
         ], 201);
     }
 
     // Login untuk admin & user
-        public function login(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required'
         ]);
 
@@ -53,13 +53,82 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login successful',
             'user' => [
-                'id'    => $user->id,
-                'name'  => $user->name,
+                'id' => $user->id,
+                'name' => $user->name,
                 'email' => $user->email,
-                'role'  => $user->role,
+                'role' => $user->role,
                 'token' => $token,
             ]
         ]);
+    }
+
+
+    public function changePassword(Request $request)
+{
+    $user = $request->user();
+
+    // Validasi input
+    $request->validate([
+        'old_password' => 'required',
+        'new_password' => 'required|min:6|confirmed', // otomatis butuh field new_password_confirmation
+    ]);
+
+    // Cek apakah password lama sesuai
+    if (!Hash::check($request->old_password, $user->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Password lama tidak sesuai.',
+        ], 401);
+    }
+
+    // Update password
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Password berhasil diubah.',
+    ]);
+}
+
+    // Update profil user (name, email, password)
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user(); // ✅ ambil user dari token Sanctum
+
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6|confirmed', // gunakan password_confirmation
+        ], [
+            'email.unique' => 'Email ini sudah digunakan oleh pengguna lain.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        // 🔹 Update data hanya jika diisi
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+
+        if ($request->filled('email')) {
+            $user->email = $request->email;
+        }
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profil berhasil diperbarui.',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]
+        ], 200);
     }
 
 

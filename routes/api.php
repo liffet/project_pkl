@@ -17,11 +17,13 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 
     // ================== LOGOUT & INFO USER ==================
+    Route::post('/user/update', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
+     Route::post('/user/change-password', [AuthController::class, 'changePassword']);
     // ================== HANYA ADMIN YANG BOLEH (CRUD) ==================
     Route::middleware('admin')->group(function () {
 
