@@ -73,53 +73,93 @@ class DashboardController extends Controller
         ));
     }
 
- public function report()
-{
-    $reports = DamageReport::with(['user', 'category'])
-        ->latest()
-        ->paginate(10);
+    public function report()
+    {
+        $reports = DamageReport::with(['user', 'category'])
+            ->latest()
+            ->paginate(10);
 
-    $totalReports = DamageReport::count();
-    $pendingReports = DamageReport::where('status', 'pending')->count();
-    $acceptedReports = DamageReport::where('status', 'accepted')->count();
-    $rejectedReports = DamageReport::where('status', 'rejected')->count();
+        $totalReports = DamageReport::count();
+        $pendingReports = DamageReport::where('status', 'pending')->count();
+        $acceptedReports = DamageReport::where('status', 'accepted')->count();
+        $rejectedReports = DamageReport::where('status', 'rejected')->count();
 
-    // View bisa diganti agar tidak tumpang tindih dengan DamageReportController
-    return view('dashboard.reports', compact(
-        'reports',
-        'totalReports',
-        'pendingReports',
-        'acceptedReports',
-        'rejectedReports'
-    ));
-}
-
-
- public function item(Request $request)
-{
-    $categories = Category::all();
-
-    $itemsQuery = Item::with('category')->latest();
-
-    if ($request->has('category_id') && $request->category_id) {
-        $itemsQuery->where('category_id', $request->category_id);
+        // View bisa diganti agar tidak tumpang tindih dengan DamageReportController
+        return view('dashboard.reports', compact(
+            'reports',
+            'totalReports',
+            'pendingReports',
+            'acceptedReports',
+            'rejectedReports'
+        ));
     }
 
-    $items = $itemsQuery->paginate(10)->withQueryString();
 
-    $totalItems = Item::count();
-    $activeItems = Item::where('status', 'active')->count();
-    $inactiveItems = Item::where('status', 'inactive')->count();
-    $needMaintenance = Item::where('replacement_date', '<=', now()->addDays(7))->count();
+    public function item(Request $request)
+    {
+        $categories = Category::all();
 
-    // View diganti agar tidak bentrok
-    return view('dashboard.items', compact(
-        'items',
-        'categories',
-        'totalItems',
-        'activeItems',
-        'inactiveItems',
-        'needMaintenance'
-    ));
-}
+        $itemsQuery = Item::with('category')->latest();
+
+        if ($request->has('category_id') && $request->category_id) {
+            $itemsQuery->where('category_id', $request->category_id);
+        }
+
+        $items = $itemsQuery->paginate(10)->withQueryString();
+
+        $totalItems = Item::count();
+        $activeItems = Item::where('status', 'active')->count();
+        $inactiveItems = Item::where('status', 'inactive')->count();
+        $needMaintenance = Item::where('replacement_date', '<=', now()->addDays(7))->count();
+
+        // View diganti agar tidak bentrok
+        return view('dashboard.items', compact(
+            'items',
+            'categories',
+            'totalItems',
+            'activeItems',
+            'inactiveItems',
+            'needMaintenance'
+        ));
+    }
+
+    public function damagereport(Request $request)
+    {
+        // Tab aktif (default: all)
+        $activeTab = $request->get('tab', 'all');
+
+        // Statistik
+        $statuses = ['pending', 'accepted', 'rejected'];
+        $totalReports = DamageReport::count();
+        $stats = [];
+        foreach ($statuses as $status) {
+            $stats[$status] = DamageReport::where('status', $status)->count();
+        }
+
+        // Pagination per tab
+        $reports = [];
+        // All reports
+        $reports['all'] = DamageReport::with(['user', 'item.category', 'item.room', 'item.floor'])
+            ->latest()
+            ->paginate(10, ['*'], 'all_page');
+
+        foreach ($statuses as $status) {
+            $reports[$status] = DamageReport::with(['user', 'item.category', 'item.room', 'item.floor'])
+                ->where('status', $status)
+                ->latest()
+                ->paginate(10, ['*'], $status . '_page');
+        }
+
+        return view('reports.index', [
+            'activeTab' => $activeTab,
+            'totalReports' => $totalReports,
+            'pendingReports' => $stats['pending'],
+            'acceptedReports' => $stats['accepted'],
+            'rejectedReports' => $stats['rejected'],
+            'allReports' => $reports['all'],
+            'pendingList' => $reports['pending'],
+            'acceptedList' => $reports['accepted'],
+            'rejectedList' => $reports['rejected'],
+        ]);
+    }
 }

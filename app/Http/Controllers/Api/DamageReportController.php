@@ -28,7 +28,21 @@ class DamageReportController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        $reports = $query->get();
+        $reports = $query->get()->map(function ($report) {
+            return [
+                'id' => $report->id,
+                'status' => $report->status,
+                'reason' => $report->reason,
+                'created_at' => $report->created_at,
+                'updated_at' => $report->updated_at,
+                'item_code' => $report->item->code ?? null,
+                'item_name' => $report->item->name ?? null,
+                'category' => $report->item->category->name ?? null,
+                'room' => $report->item->room->name ?? null,
+                'floor' => $report->item->floor->name ?? null,
+                'user' => $report->user->name ?? null,
+            ];
+        });
 
         return response()->json([
             'message' => 'List laporan kerusakan berhasil diambil',
@@ -51,11 +65,20 @@ class DamageReportController extends Controller
             'item_id' => $request->item_id,
             'reason'  => $request->reason,
             'status'  => 'pending',
-        ]);
+        ])->load(['item.category', 'item.room', 'item.floor']);
 
         return response()->json([
             'message' => 'Laporan kerusakan item berhasil dikirim',
-            'data' => $report->load(['item.category', 'item.room', 'item.floor'])
+            'data' => [
+                'id' => $report->id,
+                'status' => $report->status,
+                'reason' => $report->reason,
+                'item_code' => $report->item->code ?? null,
+                'item_name' => $report->item->name ?? null,
+                'category' => $report->item->category->name ?? null,
+                'room' => $report->item->room->name ?? null,
+                'floor' => $report->item->floor->name ?? null,
+            ]
         ], 201);
     }
 
@@ -71,14 +94,23 @@ class DamageReportController extends Controller
             'item.floor'
         ])->findOrFail($id);
 
-        // Hanya admin atau pemilik laporan yang boleh melihat
         if (Auth::user()->role === 'user' && $report->user_id !== Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         return response()->json([
             'message' => 'Detail laporan berhasil diambil',
-            'data' => $report
+            'data' => [
+                'id' => $report->id,
+                'status' => $report->status,
+                'reason' => $report->reason,
+                'item_code' => $report->item->code ?? null,
+                'item_name' => $report->item->name ?? null,
+                'category' => $report->item->category->name ?? null,
+                'room' => $report->item->room->name ?? null,
+                'floor' => $report->item->floor->name ?? null,
+                'user' => $report->user->name ?? null,
+            ]
         ]);
     }
 
@@ -97,10 +129,20 @@ class DamageReportController extends Controller
 
         $report = DamageReport::findOrFail($id);
         $report->update(['status' => $request->status]);
+        $report->load(['item.category', 'item.room', 'item.floor']);
 
         return response()->json([
             'message' => 'Status laporan berhasil diperbarui',
-            'data' => $report->load(['item.category', 'item.room', 'item.floor'])
+            'data' => [
+                'id' => $report->id,
+                'status' => $report->status,
+                'reason' => $report->reason,
+                'item_code' => $report->item->code ?? null,
+                'item_name' => $report->item->name ?? null,
+                'category' => $report->item->category->name ?? null,
+                'room' => $report->item->room->name ?? null,
+                'floor' => $report->item->floor->name ?? null,
+            ]
         ]);
     }
 

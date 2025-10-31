@@ -60,9 +60,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/floors/{id}', [FloorController::class, 'show']);
 
     // ================== Laporan Kerusakan ==================
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/damage-reports', [DamageReportController::class, 'index']);
     Route::post('/damage-reports', [DamageReportController::class, 'store']);
     Route::get('/damage-reports/{id}', [DamageReportController::class, 'show']);
     Route::put('/damage-reports/{id}', [DamageReportController::class, 'update']);
     Route::delete('/damage-reports/{id}', [DamageReportController::class, 'destroy']);
+});
+
 });

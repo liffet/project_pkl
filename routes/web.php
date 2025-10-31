@@ -43,5 +43,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // HAPUS ATAU COMMENT BARIS INI - INI YANG BIKIN KONFLIK:
 Route::get('/dashboard/items', [DashboardController::class, 'item'])->name('dashboard.items');
 Route::get('/dashboard/reports', [DashboardController::class, 'report'])->name('dashboard.reports');
-
+Route::get('/damage-reports', [DashboardController::class, 'damagereport'])->name('damage-reports.index');
 
