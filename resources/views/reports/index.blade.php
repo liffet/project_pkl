@@ -4,8 +4,16 @@
 <div class="container-fluid px-4 py-4">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-1" style="color: #1f2937;">Daftar Laporan Kerusakan Perangkat</h2>
-        <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #1f2937;">Daftar Laporan Kerusakan Perangkat</h2>
+            <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Tombol Export Excel -->
+            <a href="{{ route('damage-reports.export.excel') }}" class="btn btn-sm btn-primary" style="background-color:#2D4194;border:none;">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -100,7 +108,9 @@
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
+                                <th>Foto</th>
                                 <th>Status</th>
+                                <th>Tanggal Laporan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -108,6 +118,7 @@
                             @forelse($allReports as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                              
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -115,6 +126,17 @@
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
+                                  <td>
+                                    @if($report->photo)
+                                        <img src="{{ asset('storage/' . $report->photo) }}" 
+                                             alt="Foto Kerusakan" 
+                                             class="damage-photo-thumbnail"
+                                             data-bs-toggle="modal" 
+                                             data-bs-target="#photoModal{{ $report->id }}">
+                                    @else
+                                        <span class="text-muted small">Tidak ada foto</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @if($report->status == 'accepted')
                                     <span class="badge-status success">Diterima</span>
@@ -124,6 +146,7 @@
                                     <span class="badge-status warning">Pending</span>
                                     @endif
                                 </td>
+                                <td>{{ $report->created_at->format('d-m-Y H:i') }}</td>
                                 <td>
                                     <div class="d-flex gap-2">
                                         <form action="{{ route('damage-reports.update', $report->id) }}" method="POST" class="d-inline">
@@ -145,9 +168,33 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- Modal untuk foto -->
+                            @if($report->photo)
+                            <div class="modal fade" id="photoModal{{ $report->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Foto Kerusakan - {{ $report->item->name ?? 'Perangkat' }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="{{ asset('storage/' . $report->photo) }}" 
+                                                 alt="Foto Kerusakan" 
+                                                 class="img-fluid rounded"
+                                                 style="max-height: 70vh;">
+                                            <div class="mt-3 text-start">
+                                                <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
+                                                <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                             @empty
                             <tr>
-                                <td colspan="10" class="text-center py-5 text-muted">Tidak ada laporan kerusakan</td>
+                                <td colspan="12" class="text-center py-5 text-muted">Tidak ada laporan kerusakan</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -191,7 +238,9 @@
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
+                                <th>Foto</th>
                                 <th>Status</th>
+                                <th>Tanggal Laporan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -199,6 +248,7 @@
                             @forelse($pendingList as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                               
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -206,7 +256,19 @@
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
+                                 <td>
+                                    @if($report->photo)
+                                        <img src="{{ asset('storage/' . $report->photo) }}" 
+                                             alt="Foto Kerusakan" 
+                                             class="damage-photo-thumbnail"
+                                             data-bs-toggle="modal" 
+                                             data-bs-target="#photoModalPending{{ $report->id }}">
+                                    @else
+                                        <span class="text-muted small">Tidak ada foto</span>
+                                    @endif
+                                </td>
                                 <td><span class="badge-status warning">Pending</span></td>
+                                <td>{{ $report->created_at->format('d-m-Y H:i') }}</td>
                                 <td>
                                     <div class="d-flex gap-2">
                                         <form action="{{ route('damage-reports.update', $report->id) }}" method="POST" class="d-inline">
@@ -228,9 +290,33 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- Modal untuk foto -->
+                            @if($report->photo)
+                            <div class="modal fade" id="photoModalPending{{ $report->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Foto Kerusakan - {{ $report->item->name ?? 'Perangkat' }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="{{ asset('storage/' . $report->photo) }}" 
+                                                 alt="Foto Kerusakan" 
+                                                 class="img-fluid rounded"
+                                                 style="max-height: 70vh;">
+                                            <div class="mt-3 text-start">
+                                                <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
+                                                <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                             @empty
                             <tr>
-                                <td colspan="10" class="text-center py-5 text-muted">Tidak ada laporan pending</td>
+                                <td colspan="12" class="text-center py-5 text-muted">Tidak ada laporan pending</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -274,13 +360,16 @@
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
+                                <th>Foto</th>
                                 <th>Status</th>
+                                <th>Tanggal Laporan</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($acceptedList as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                                
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -288,11 +377,47 @@
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
+                                <td>
+                                    @if($report->photo)
+                                        <img src="{{ asset('storage/' . $report->photo) }}" 
+                                             alt="Foto Kerusakan" 
+                                             class="damage-photo-thumbnail"
+                                             data-bs-toggle="modal" 
+                                             data-bs-target="#photoModalAccepted{{ $report->id }}">
+                                    @else
+                                        <span class="text-muted small">Tidak ada foto</span>
+                                    @endif
+                                </td>
                                 <td><span class="badge-status success">Diterima</span></td>
+                                <td>{{ $report->created_at->format('d-m-Y H:i') }}</td>
                             </tr>
+
+                            <!-- Modal untuk foto -->
+                            @if($report->photo)
+                            <div class="modal fade" id="photoModalAccepted{{ $report->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Foto Kerusakan - {{ $report->item->name ?? 'Perangkat' }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="{{ asset('storage/' . $report->photo) }}" 
+                                                 alt="Foto Kerusakan" 
+                                                 class="img-fluid rounded"
+                                                 style="max-height: 70vh;">
+                                            <div class="mt-3 text-start">
+                                                <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
+                                                <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center py-5 text-muted">Tidak ada laporan yang diterima</td>
+                                <td colspan="11" class="text-center py-5 text-muted">Tidak ada laporan yang diterima</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -336,13 +461,16 @@
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
+                                <th>Foto</th>
                                 <th>Status</th>
+                                <th>Tanggal Laporan</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($rejectedList as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                              
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -350,11 +478,47 @@
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
+                                  <td>
+                                    @if($report->photo)
+                                        <img src="{{ asset('storage/' . $report->photo) }}" 
+                                             alt="Foto Kerusakan" 
+                                             class="damage-photo-thumbnail"
+                                             data-bs-toggle="modal" 
+                                             data-bs-target="#photoModalRejected{{ $report->id }}">
+                                    @else
+                                        <span class="text-muted small">Tidak ada foto</span>
+                                    @endif
+                                </td>
                                 <td><span class="badge-status danger">Ditolak</span></td>
+                                <td>{{ $report->created_at->format('d-m-Y H:i') }}</td>
                             </tr>
+
+                            <!-- Modal untuk foto -->
+                            @if($report->photo)
+                            <div class="modal fade" id="photoModalRejected{{ $report->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Foto Kerusakan - {{ $report->item->name ?? 'Perangkat' }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="{{ asset('storage/' . $report->photo) }}" 
+                                                 alt="Foto Kerusakan" 
+                                                 class="img-fluid rounded"
+                                                 style="max-height: 70vh;">
+                                            <div class="mt-3 text-start">
+                                                <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
+                                                <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center py-5 text-muted">Tidak ada laporan yang ditolak</td>
+                                <td colspan="11" class="text-center py-5 text-muted">Tidak ada laporan yang ditolak</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -388,6 +552,40 @@
 </div>
 
 <style>
+    /* Photo Thumbnail */
+    .damage-photo-thumbnail {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .damage-photo-thumbnail:hover {
+        transform: scale(1.1);
+        border-color: #2D4194;
+        box-shadow: 0 4px 12px rgba(45, 65, 148, 0.2);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-body img {
+        border: 1px solid #e5e7eb;
+    }
+
     /* Warna Khusus Tiap Tab */
     #all-tab.active {
         color: #2D4194;
@@ -550,6 +748,7 @@
         font-size: 0.875rem;
         color: #374151;
         border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
     }
 
     .custom-table tbody tr:hover {

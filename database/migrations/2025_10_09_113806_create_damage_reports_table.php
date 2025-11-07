@@ -20,9 +20,12 @@ return new class extends Migration
             // Alasan kerusakan
             $table->text('reason');
             
-            // Status: pending / accepted / rejected
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+            // Foto kerusakan
+            $table->string('photo')->nullable(); // bisa kosong, disarankan simpan path foto
             
+            // Status laporan
+            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+                
             $table->timestamps();
         });
     }

@@ -45,3 +45,5 @@ Route::get('/dashboard/items', [DashboardController::class, 'item'])->name('dash
 Route::get('/dashboard/reports', [DashboardController::class, 'report'])->name('dashboard.reports');
 Route::get('/damage-reports', [DashboardController::class, 'damagereport'])->name('damage-reports.index');
 
+// Export laporan kerusakan
+Route::get('/damage-reports/export/excel', [DamageReportController::class, 'exportExcel'])->name('damage-reports.export.excel');

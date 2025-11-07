@@ -13,6 +13,7 @@ class DamageReport extends Model
         'user_id',
         'item_id',
         'reason',
+        'photo',
         'status',
     ];
 

@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DamageReport;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class DamageReportController extends Controller
 {
@@ -33,6 +35,7 @@ class DamageReportController extends Controller
                 'id' => $report->id,
                 'status' => $report->status,
                 'reason' => $report->reason,
+                'photo' => $report->photo ? asset('storage/' . $report->photo) : null,
                 'created_at' => $report->created_at,
                 'updated_at' => $report->updated_at,
                 'item_code' => $report->item->code ?? null,
@@ -51,28 +54,58 @@ class DamageReportController extends Controller
     }
 
     /**
-     * 🔹 User melaporkan item rusak
+     * 🔹 User melaporkan item rusak (dengan foto bukti)
+     * Foto otomatis dikompres & disimpan di storage/app/public/damage_photos
      */
     public function store(Request $request)
     {
         $request->validate([
             'item_id' => 'required|exists:items,id',
             'reason'  => 'required|string|max:1000',
+            'photo'   => 'required|image|mimes:jpg,jpeg,png|max:4096',
         ]);
+
+        $photoPath = null;
+
+        if ($request->hasFile('photo')) {
+            $image = $request->file('photo');
+
+            // Pastikan folder ada
+            $destination = storage_path('app/public/damage_photos');
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            // Simpan nama file unik
+            $filename = uniqid('damage_') . '.' . $image->getClientOriginalExtension();
+
+            // 🔹 Kompres otomatis (75%) dan resize agar lebih ringan
+            Image::make($image)
+                ->resize(1024, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->save($destination . '/' . $filename, 75);
+
+            // Simpan path di database
+            $photoPath = 'damage_photos/' . $filename;
+        }
 
         $report = DamageReport::create([
             'user_id' => Auth::id(),
             'item_id' => $request->item_id,
             'reason'  => $request->reason,
+            'photo'   => $photoPath,
             'status'  => 'pending',
         ])->load(['item.category', 'item.room', 'item.floor']);
 
         return response()->json([
-            'message' => 'Laporan kerusakan item berhasil dikirim',
+            'message' => 'Laporan kerusakan berhasil dikirim',
             'data' => [
                 'id' => $report->id,
                 'status' => $report->status,
                 'reason' => $report->reason,
+                'photo' => $report->photo ? asset('storage/' . $report->photo) : null,
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
@@ -104,6 +137,7 @@ class DamageReportController extends Controller
                 'id' => $report->id,
                 'status' => $report->status,
                 'reason' => $report->reason,
+                'photo' => $report->photo ? asset('storage/' . $report->photo) : null,
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
@@ -137,6 +171,7 @@ class DamageReportController extends Controller
                 'id' => $report->id,
                 'status' => $report->status,
                 'reason' => $report->reason,
+                'photo' => $report->photo ? asset('storage/' . $report->photo) : null,
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
@@ -156,6 +191,12 @@ class DamageReportController extends Controller
         }
 
         $report = DamageReport::findOrFail($id);
+
+        // 🔹 Hapus foto juga dari storage jika ada
+        if ($report->photo && Storage::disk('public')->exists($report->photo)) {
+            Storage::disk('public')->delete($report->photo);
+        }
+
         $report->delete();
 
         return response()->json(['message' => 'Laporan berhasil dihapus']);
