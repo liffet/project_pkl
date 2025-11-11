@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CategorysExport;
 
 class CategoryController extends Controller
 {
@@ -66,5 +68,10 @@ class CategoryController extends Controller
         return redirect()
             ->route('categories.index')
             ->with('success', 'Kategori berhasil dihapus');
+    }
+
+    public function exportExcel()
+    {
+        return Excel::download(new CategorysExport, 'categories.xlsx');
     }
 }

@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     // Resource routes
     Route::resource('categories', CategoryController::class);
     Route::resource('items', ItemWebController::class);  // Ini sudah cukup untuk CRUD + filter
-    Route::resource('floors', FloorController::class);
+    Route::resource('floors', FloorController::class)->except(['show']);
     Route::resource('rooms', RoomController::class);
     Route::resource('damage-reports', DamageReportController::class)->only(['index', 'show', 'update']);
     
@@ -45,5 +45,9 @@ Route::get('/dashboard/items', [DashboardController::class, 'item'])->name('dash
 Route::get('/dashboard/reports', [DashboardController::class, 'report'])->name('dashboard.reports');
 Route::get('/damage-reports', [DashboardController::class, 'damagereport'])->name('damage-reports.index');
 
-// Export laporan kerusakan
+// Export excel
 Route::get('/damage-reports/export/excel', [DamageReportController::class, 'exportExcel'])->name('damage-reports.export.excel');
+Route::get('/items/export/excel', [ItemWebController::class, 'exportExcel'])->name('items.export.excel');
+Route::get('/rooms/export/excel', [RoomController::class, 'exportExcel'])->name('rooms.export.excel');
+Route::get('/categories/export/excel', [CategoryController::class, 'exportExcel'])->name('categories.export.excel');
+Route::get('/floors/export-excel', [FloorController::class, 'exportExcel'])->name('floors.export.excel');

@@ -5,6 +5,11 @@
 @section('content')
 <div class="container-fluid px-4 py-4">
     <!-- Page Header -->
+    <div>
+        <a href="{{ route('floors.export.excel') }}" class="btn btn-success mb-3">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel
+        </a>
+    </div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Lantai</h2>

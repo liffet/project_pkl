@@ -6,6 +6,8 @@ use App\Models\Room;
 use App\Models\Floor;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RoomsExport;
 
 class RoomController extends Controller
 {
@@ -157,5 +159,10 @@ public function update(Request $request, $id)
         $room->delete();
 
         return redirect()->route('rooms.index')->with('success', 'Ruangan berhasil dihapus.');
+    }
+
+     public function exportExcel()
+    {
+        return Excel::download(new RoomsExport, 'rooms.xlsx');
     }
 }
