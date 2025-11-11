@@ -3,6 +3,14 @@
 @section('content')
 <div class="container-fluid px-4 py-4">
     <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Daftar Barang</h4>
+    <div>
+        <a href="{{ route('items.export.excel') }}" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Export Excel
+        </a>
+    </div>
+    </div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Manajemen Perangkat</h2>
@@ -531,6 +539,19 @@
     border-radius: 12px;
     border: none;
     box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.btn-success {
+    background-color: #16a34a;
+    border-color: #16a34a;
+    color: white;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-success:hover {
+    background-color: #15803d;
 }
 
 .modal-header {

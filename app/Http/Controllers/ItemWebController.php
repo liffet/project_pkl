@@ -9,6 +9,9 @@ use App\Models\Floor;
 use Illuminate\Http\Request;
 use App\Services\TelegramService;
 use Illuminate\Support\Str;
+use App\Exports\ItemsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class ItemWebController extends Controller
 {
@@ -217,5 +220,11 @@ class ItemWebController extends Controller
     {
         $item = Item::with(['category', 'room', 'floor'])->findOrFail($id);
         return view('items.show', compact('item'));
+    }
+
+    public function exportExcel()
+    {
+        $fileName = 'data_items_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new ItemsExport, $fileName);
     }
 }

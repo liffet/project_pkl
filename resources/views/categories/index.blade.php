@@ -5,6 +5,12 @@
 @section('content')
 <div class="container-fluid px-4 py-4">
     <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{{ route('categories.export.excel') }}" class="btn btn-success">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel
+        </a>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Kategori</h2>
@@ -183,6 +189,20 @@
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(45, 65, 148, 0.3);
     }
+
+    .btn-success {
+    background-color: #16a34a;
+    border-color: #16a34a;
+    color: white;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s;
+    }
+    Z
+    .btn-success:hover {
+        background-color: #15803d;
+    }
+
 
     /* Table Card */
     .table-card {
