@@ -5,21 +5,41 @@
 @section('content')
 <div class="container-fluid px-4 py-4">
     <!-- Page Header -->
-    <div>
-        <a href="{{ route('floors.export.excel') }}" class="btn btn-success mb-3">
-        <i class="bi bi-file-earmark-excel"></i> Export Excel
-        </a>
-    </div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Lantai</h2>
             <p class="text-muted mb-0" style="font-size: 0.875rem;">Kelola lantai gedung Anda</p>
         </div>
         <div class="d-flex gap-3 align-items-center">
+            <!-- Tombol Export Excel -->
+            <a href="{{ route('floors.export.excel') }}"
+               class="btn shadow-sm d-flex align-items-center px-3 py-2"
+               style="
+                   background-color: #2D4194;
+                   color: white;
+                   border: none;
+                   border-radius: 8px;
+                   font-size: 14px;
+                   font-weight: 600;
+                   transition: all 0.2s ease;
+                   user-select: none;
+               "
+               onmouseover="this.style.backgroundColor='#3E52B0'"
+               onmouseout="this.style.backgroundColor='#2D4194'"
+               onmousedown="this.style.backgroundColor='black'; this.style.color='white';"
+               onmouseup="this.style.backgroundColor='#3E52B0'; this.style.color='white';"
+               onfocus="this.style.boxShadow='none'; this.style.outline='none';">
+                <i class="bi bi-file-earmark-excel me-2" style="font-size: 1rem;"></i>
+                Export Excel
+            </a>
+
+            <!-- Tombol Tambah Lantai -->
             <a href="{{ route('floors.create') }}" class="btn-add">
                 <i class="bi bi-plus-lg"></i>
                 Tambah Lantai
             </a>
+
+            <!-- Tanggal -->
             <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
         </div>
     </div>

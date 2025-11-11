@@ -5,28 +5,43 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1" style="color: #1f2937;">Daftar Laporan Kerusakan Perangkat</h2>
-            <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
+            <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">
+                Daftar Laporan Kerusakan Perangkat
+            </h2>
+            <p class="text-muted mb-0" style="font-size: 0.875rem;">
+                Kelola dan pantau laporan kerusakan perangkat yang diajukan pengguna
+            </p>
         </div>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-3">
             <!-- Tombol Export Excel -->
             <a href="{{ route('damage-reports.export.excel') }}"
-                class="btn shadow-sm d-flex align-items-center px-3 py-2 fw-semibold"
+                class="btn shadow-sm d-flex align-items-center px-3 py-2"
                 style="
-           background-color: #2D4194;
-           color: white;
-           border: none;
-           border-radius: 8px;
-           transition: all 0.2s ease;
-       "
+                   background-color: #2D4194;
+                   color: white;
+                   border: none;
+                   border-radius: 8px;
+                   font-size: 14px;
+                   font-weight: 600;
+                   transition: all 0.2s ease;
+                   user-select: none;
+               "
                 onmouseover="this.style.backgroundColor='#3E52B0'"
-                onmouseout="this.style.backgroundColor='#2D4194'">
+                onmouseout="this.style.backgroundColor='#2D4194'"
+                onmousedown="this.style.backgroundColor='black'; this.style.color='white';"
+                onmouseup="this.style.backgroundColor='#3E52B0'; this.style.color='white';"
+                onfocus="this.style.boxShadow='none'; this.style.outline='none';">
                 <i class="bi bi-file-earmark-excel me-2" style="font-size: 1rem;"></i>
                 Export Excel
             </a>
-        </div>
 
+            <!-- Tanggal -->
+            <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
+        </div>
     </div>
+
+
+
 
     @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">

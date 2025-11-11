@@ -3,26 +3,46 @@
 @section('content')
 <div class="container-fluid px-4 py-4">
     <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Daftar Barang</h4>
-    <div>
-        <a href="{{ route('items.export.excel') }}" class="btn btn-success">
-            <i class="bi bi-file-earmark-excel"></i> Export Excel
-        </a>
-    </div>
-    </div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Manajemen Perangkat</h2>
+            <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">
+                Manajemen Perangkat
+            </h2>
+            <p class="text-muted mb-0" style="font-size: 0.875rem;">
+                Kelola data perangkat yang tersedia, termasuk informasi, status, dan ketersediaannya.
+            </p>
         </div>
         <div class="d-flex gap-3 align-items-center">
+            <!-- Tombol Export Excel -->
+            <a href="{{ route('damage-reports.export.excel') }}"
+               class="btn shadow-sm d-flex align-items-center px-3 py-2 fw-semibold"
+               style="
+                   background-color: #2D4194;
+                   color: white;
+                   border: none;
+                   border-radius: 8px;
+                   font-size: 14px;
+                   font-weight: 600;
+                   transition: all 0.2s ease;
+               "
+               onmouseover="this.style.backgroundColor='#3E52B0'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 5px 12px rgba(45,65,148,0.35)';"
+               onmouseout="this.style.backgroundColor='#2D4194'; this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 6px rgba(0,0,0,0.1)';">
+                <i class="bi bi-file-earmark-excel me-2" style="font-size: 1rem;"></i>
+                Export Excel
+            </a>
+
+            <!-- Tombol Tambah Perangkat -->
             <a href="{{ route('items.create') }}" class="btn-add">
                 <i class="bi bi-plus-lg"></i>
                 Tambah Perangkat
             </a>
+
+            <!-- Tanggal -->
             <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
         </div>
     </div>
+
+
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
