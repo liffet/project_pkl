@@ -10,10 +10,22 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <!-- Tombol Export Excel -->
-            <a href="{{ route('damage-reports.export.excel') }}" class="btn btn-sm btn-primary" style="background-color:#2D4194;border:none;">
-                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+            <a href="{{ route('damage-reports.export.excel') }}"
+                class="btn shadow-sm d-flex align-items-center px-3 py-2 fw-semibold"
+                style="
+           background-color: #2D4194;
+           color: white;
+           border: none;
+           border-radius: 8px;
+           transition: all 0.2s ease;
+       "
+                onmouseover="this.style.backgroundColor='#3E52B0'"
+                onmouseout="this.style.backgroundColor='#2D4194'">
+                <i class="bi bi-file-earmark-excel me-2" style="font-size: 1rem;"></i>
+                Export Excel
             </a>
         </div>
+
     </div>
 
     @if(session('success'))
@@ -27,10 +39,10 @@
     <div class="row g-3 mb-4">
         @php
         $stats = [
-            ['label' => 'Total Laporan', 'value' => $totalReports ?? 0, 'icon' => 'bi-file-text', 'color' => 'primary'],
-            ['label' => 'Pending', 'value' => $pendingReports ?? 0, 'icon' => 'bi-clock-history', 'color' => 'warning'],
-            ['label' => 'Diterima', 'value' => $acceptedReports ?? 0, 'icon' => 'bi-check-circle', 'color' => 'success'],
-            ['label' => 'Ditolak', 'value' => $rejectedReports ?? 0, 'icon' => 'bi-x-circle', 'color' => 'danger'],
+        ['label' => 'Total Laporan', 'value' => $totalReports ?? 0, 'icon' => 'bi-file-text', 'color' => 'primary'],
+        ['label' => 'Pending', 'value' => $pendingReports ?? 0, 'icon' => 'bi-clock-history', 'color' => 'warning'],
+        ['label' => 'Diterima', 'value' => $acceptedReports ?? 0, 'icon' => 'bi-check-circle', 'color' => 'success'],
+        ['label' => 'Ditolak', 'value' => $rejectedReports ?? 0, 'icon' => 'bi-x-circle', 'color' => 'danger'],
         ];
         @endphp
 
@@ -58,36 +70,36 @@
     <div class="table-card">
         <!-- Helper PHP untuk append tab ke URL -->
         @php
-            function appendTab($url, $tab) {
-                if (!$url) return '#';
-                $separator = strpos($url, '?') !== false ? '&' : '?';
-                return $url . $separator . 'tab=' . $tab;
-            }
+        function appendTab($url, $tab) {
+        if (!$url) return '#';
+        $separator = strpos($url, '?') !== false ? '&' : '?';
+        return $url . $separator . 'tab=' . $tab;
+        }
         @endphp
 
         <!-- Tabs -->
         <ul class="nav custom-tabs" id="reportsTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="custom-tab {{ $activeTab === 'all' ? 'active' : '' }}" 
-                        id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                <button class="custom-tab {{ $activeTab === 'all' ? 'active' : '' }}"
+                    id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
                     Semua Laporan
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="custom-tab {{ $activeTab === 'pending' ? 'active' : '' }}" 
-                        id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                <button class="custom-tab {{ $activeTab === 'pending' ? 'active' : '' }}"
+                    id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
                     Pending
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="custom-tab {{ $activeTab === 'accepted' ? 'active' : '' }}" 
-                        id="accepted-tab" data-bs-toggle="tab" data-bs-target="#accepted" type="button" role="tab">
+                <button class="custom-tab {{ $activeTab === 'accepted' ? 'active' : '' }}"
+                    id="accepted-tab" data-bs-toggle="tab" data-bs-target="#accepted" type="button" role="tab">
                     Diterima
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="custom-tab {{ $activeTab === 'rejected' ? 'active' : '' }}" 
-                        id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
+                <button class="custom-tab {{ $activeTab === 'rejected' ? 'active' : '' }}"
+                    id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
                     Ditolak
                 </button>
             </li>
@@ -118,7 +130,7 @@
                             @forelse($allReports as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                              
+
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -126,15 +138,15 @@
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
-                                  <td>
+                                <td>
                                     @if($report->photo)
-                                        <img src="{{ asset('storage/' . $report->photo) }}" 
-                                             alt="Foto Kerusakan" 
-                                             class="damage-photo-thumbnail"
-                                             data-bs-toggle="modal" 
-                                             data-bs-target="#photoModal{{ $report->id }}">
+                                    <img src="{{ asset('storage/' . $report->photo) }}"
+                                        alt="Foto Kerusakan"
+                                        class="damage-photo-thumbnail"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#photoModal{{ $report->id }}">
                                     @else
-                                        <span class="text-muted small">Tidak ada foto</span>
+                                    <span class="text-muted small">Tidak ada foto</span>
                                     @endif
                                 </td>
                                 <td>
@@ -179,10 +191,10 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body text-center">
-                                            <img src="{{ asset('storage/' . $report->photo) }}" 
-                                                 alt="Foto Kerusakan" 
-                                                 class="img-fluid rounded"
-                                                 style="max-height: 70vh;">
+                                            <img src="{{ asset('storage/' . $report->photo) }}"
+                                                alt="Foto Kerusakan"
+                                                class="img-fluid rounded"
+                                                style="max-height: 70vh;">
                                             <div class="mt-3 text-start">
                                                 <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
                                                 <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
@@ -248,7 +260,7 @@
                             @forelse($pendingList as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                               
+
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -256,15 +268,15 @@
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
-                                 <td>
+                                <td>
                                     @if($report->photo)
-                                        <img src="{{ asset('storage/' . $report->photo) }}" 
-                                             alt="Foto Kerusakan" 
-                                             class="damage-photo-thumbnail"
-                                             data-bs-toggle="modal" 
-                                             data-bs-target="#photoModalPending{{ $report->id }}">
+                                    <img src="{{ asset('storage/' . $report->photo) }}"
+                                        alt="Foto Kerusakan"
+                                        class="damage-photo-thumbnail"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#photoModalPending{{ $report->id }}">
                                     @else
-                                        <span class="text-muted small">Tidak ada foto</span>
+                                    <span class="text-muted small">Tidak ada foto</span>
                                     @endif
                                 </td>
                                 <td><span class="badge-status warning">Pending</span></td>
@@ -301,10 +313,10 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body text-center">
-                                            <img src="{{ asset('storage/' . $report->photo) }}" 
-                                                 alt="Foto Kerusakan" 
-                                                 class="img-fluid rounded"
-                                                 style="max-height: 70vh;">
+                                            <img src="{{ asset('storage/' . $report->photo) }}"
+                                                alt="Foto Kerusakan"
+                                                class="img-fluid rounded"
+                                                style="max-height: 70vh;">
                                             <div class="mt-3 text-start">
                                                 <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
                                                 <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
@@ -369,7 +381,7 @@
                             @forelse($acceptedList as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                
+
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -379,13 +391,13 @@
                                 <td>{{ $report->reason }}</td>
                                 <td>
                                     @if($report->photo)
-                                        <img src="{{ asset('storage/' . $report->photo) }}" 
-                                             alt="Foto Kerusakan" 
-                                             class="damage-photo-thumbnail"
-                                             data-bs-toggle="modal" 
-                                             data-bs-target="#photoModalAccepted{{ $report->id }}">
+                                    <img src="{{ asset('storage/' . $report->photo) }}"
+                                        alt="Foto Kerusakan"
+                                        class="damage-photo-thumbnail"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#photoModalAccepted{{ $report->id }}">
                                     @else
-                                        <span class="text-muted small">Tidak ada foto</span>
+                                    <span class="text-muted small">Tidak ada foto</span>
                                     @endif
                                 </td>
                                 <td><span class="badge-status success">Diterima</span></td>
@@ -402,10 +414,10 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body text-center">
-                                            <img src="{{ asset('storage/' . $report->photo) }}" 
-                                                 alt="Foto Kerusakan" 
-                                                 class="img-fluid rounded"
-                                                 style="max-height: 70vh;">
+                                            <img src="{{ asset('storage/' . $report->photo) }}"
+                                                alt="Foto Kerusakan"
+                                                class="img-fluid rounded"
+                                                style="max-height: 70vh;">
                                             <div class="mt-3 text-start">
                                                 <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
                                                 <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
@@ -470,7 +482,7 @@
                             @forelse($rejectedList as $report)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                              
+
                                 <td>{{ $report->user->name ?? '-' }}</td>
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
@@ -478,15 +490,15 @@
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
-                                  <td>
+                                <td>
                                     @if($report->photo)
-                                        <img src="{{ asset('storage/' . $report->photo) }}" 
-                                             alt="Foto Kerusakan" 
-                                             class="damage-photo-thumbnail"
-                                             data-bs-toggle="modal" 
-                                             data-bs-target="#photoModalRejected{{ $report->id }}">
+                                    <img src="{{ asset('storage/' . $report->photo) }}"
+                                        alt="Foto Kerusakan"
+                                        class="damage-photo-thumbnail"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#photoModalRejected{{ $report->id }}">
                                     @else
-                                        <span class="text-muted small">Tidak ada foto</span>
+                                    <span class="text-muted small">Tidak ada foto</span>
                                     @endif
                                 </td>
                                 <td><span class="badge-status danger">Ditolak</span></td>
@@ -503,10 +515,10 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body text-center">
-                                            <img src="{{ asset('storage/' . $report->photo) }}" 
-                                                 alt="Foto Kerusakan" 
-                                                 class="img-fluid rounded"
-                                                 style="max-height: 70vh;">
+                                            <img src="{{ asset('storage/' . $report->photo) }}"
+                                                alt="Foto Kerusakan"
+                                                class="img-fluid rounded"
+                                                style="max-height: 70vh;">
                                             <div class="mt-3 text-start">
                                                 <p class="mb-1"><strong>Alasan:</strong> {{ $report->reason }}</p>
                                                 <p class="mb-0"><strong>Dilaporkan oleh:</strong> {{ $report->user->name ?? '-' }}</p>
