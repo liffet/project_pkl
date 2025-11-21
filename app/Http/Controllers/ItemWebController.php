@@ -103,15 +103,15 @@ class ItemWebController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_id'      => 'required|exists:categories,id',
-            'room_id'          => 'required|exists:rooms,id',
-            'floor_id'         => 'required|exists:floors,id',
-            'code'             => 'nullable|string|max:50|unique:items,code',
-            'name'             => 'required|string|max:255',
-            'status'           => 'required|in:active,inactive',
-            'install_date'     => 'required|date',
+            'category_id' => 'required|exists:categories,id',
+            'room_id' => 'required|exists:rooms,id',
+            'floor_id' => 'required|exists:floors,id',
+            'code' => 'nullable|string|max:50|unique:items,code',
+            'name' => 'required|string|max:255',
+            'status' => 'required|in:active,inactive',
+            'install_date' => 'required|date',
             'replacement_date' => 'required|date|after_or_equal:install_date',
-            'photo'            => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->only([
@@ -156,14 +156,14 @@ class ItemWebController extends Controller
         $item = Item::findOrFail($id);
 
         $request->validate([
-            'category_id'      => 'required|exists:categories,id',
-            'room_id'          => 'required|exists:rooms,id',
-            'floor_id'         => 'required|exists:floors,id',
-            'name'             => 'required|string|max:255',
-            'status'           => 'required|in:active,inactive',
-            'install_date'     => 'required|date',
+            'category_id' => 'required|exists:categories,id',
+            'room_id' => 'required|exists:rooms,id',
+            'floor_id' => 'required|exists:floors,id',
+            'name' => 'required|string|max:255',
+            'status' => 'required|in:active,inactive',
+            'install_date' => 'required|date',
             'replacement_date' => 'required|date|after_or_equal:install_date',
-            'photo'            => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->only([
@@ -222,9 +222,9 @@ class ItemWebController extends Controller
         return view('items.show', compact('item'));
     }
 
-    public function exportExcel()
+    public function exportExcel(Request $request)
     {
-        $fileName = 'data_items_' . now()->format('Ymd_His') . '.xlsx';
-        return Excel::download(new ItemsExport, $fileName);
+        return Excel::download(new ItemsExport($request->all()), 'items.xlsx');
     }
+
 }

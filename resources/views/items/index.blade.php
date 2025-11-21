@@ -2,7 +2,8 @@
 
 @section('content')
 <div class="container-fluid px-4 py-4">
-    <!-- Page Header -->
+
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">
@@ -12,266 +13,255 @@
                 Kelola data perangkat yang tersedia, termasuk informasi, status, dan ketersediaannya.
             </p>
         </div>
+3
         <div class="d-flex gap-3 align-items-center">
-            <!-- Tombol Export Excel -->
-            <a href="{{ route('damage-reports.export.excel') }}"
+            <!-- Export Excel membawa FILTER -->
+            <a href="{{ route('items.export.excel', request()->all()) }}"
                class="btn shadow-sm d-flex align-items-center px-3 py-2 fw-semibold"
-               style="
-                   background-color: #2D4194;
-                   color: white;
-                   border: none;
-                   border-radius: 8px;
-                   font-size: 14px;
-                   font-weight: 600;
-                   transition: all 0.2s ease;
-               "
-               onmouseover="this.style.backgroundColor='#3E52B0'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 5px 12px rgba(45,65,148,0.35)';"
-               onmouseout="this.style.backgroundColor='#2D4194'; this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 6px rgba(0,0,0,0.1)';">
-                <i class="bi bi-file-earmark-excel me-2" style="font-size: 1rem;"></i>
+               style="background-color:#2D4194;color:white;border:none;border-radius:8px;">
+                <i class="bi bi-file-earmark-excel me-2"></i>
                 Export Excel
             </a>
 
-            <!-- Tombol Tambah Perangkat -->
             <a href="{{ route('items.create') }}" class="btn-add">
                 <i class="bi bi-plus-lg"></i>
                 Tambah Perangkat
             </a>
 
-            <!-- Tanggal -->
             <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
         </div>
     </div>
 
 
-
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show">
             <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <!-- Stats Cards -->
+
+    <!-- Stats -->
     <div class="row g-3 mb-4">
         <div class="col-lg-3 col-md-6">
             <div class="stats-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="stats-label">
-                            <span class="stats-bullet primary"></span>
-                            Total Perangkat
+                            <span class="stats-bullet primary"></span>Total Perangkat
                         </div>
                         <div class="stats-value">{{ $totalItems ?? 0 }}</div>
                     </div>
-                    <div class="stats-icon primary">
-                        <i class="bi bi-phone"></i>
-                    </div>
+                    <div class="stats-icon primary"><i class="bi bi-phone"></i></div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
             <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex justify-content-between">
                     <div>
                         <div class="stats-label">
-                            <span class="stats-bullet success"></span>
-                            Aktif
+                            <span class="stats-bullet success"></span>Aktif
                         </div>
                         <div class="stats-value text-success">{{ $activeItems ?? 0 }}</div>
                     </div>
-                    <div class="stats-icon success">
-                        <i class="bi bi-check-circle"></i>
-                    </div>
+                    <div class="stats-icon success"><i class="bi bi-check-circle"></i></div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
             <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex justify-content-between">
                     <div>
                         <div class="stats-label">
-                            <span class="stats-bullet warning"></span>
-                            Tidak Aktif
+                            <span class="stats-bullet warning"></span>Tidak Aktif
                         </div>
                         <div class="stats-value text-warning">{{ $inactiveItems ?? 0 }}</div>
                     </div>
-                    <div class="stats-icon warning">
-                        <i class="bi bi-x-circle"></i>
-                    </div>
+                    <div class="stats-icon warning"><i class="bi bi-x-circle"></i></div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
             <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex justify-content-between">
                     <div>
                         <div class="stats-label">
-                            <span class="stats-bullet danger"></span>
-                            Perlu Maintenance
+                            <span class="stats-bullet danger"></span>Perlu Maintenance
                         </div>
                         <div class="stats-value text-danger">{{ $needMaintenance ?? 0 }}</div>
                     </div>
-                    <div class="stats-icon danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                    </div>
+                    <div class="stats-icon danger"><i class="bi bi-exclamation-triangle"></i></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Filter Button Section -->
+
+    <!-- Filter Section -->
     <div class="mb-3">
-        <div class="d-flex gap-2 align-items-center">
-            <button type="button" class="btn-filter" data-bs-toggle="modal" data-bs-target="#filterModal">
-                <i class="bi bi-funnel"></i>
-                Filter Data
-                @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
-                    <span class="filter-badge">{{ count(array_filter(request()->only(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))) }}</span>
+
+        <div class="d-flex gap-2">
+            <button class="btn-filter" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="bi bi-funnel"></i> Filter Data
+
+                @php
+                    $filterCount = count(array_filter(request()->only([
+                        'item_name','category_id','status','room_id','floor_id'
+                    ])));
+                @endphp
+
+                @if($filterCount > 0)
+                    <span class="filter-badge">{{ $filterCount }}</span>
                 @endif
             </button>
-            
-            @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
+
+            @if($filterCount > 0)
                 <a href="{{ route('items.index') }}" class="btn-reset">
-                    <i class="bi bi-arrow-counterclockwise"></i>
-                    Reset Filter
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset Filter
                 </a>
             @endif
         </div>
-        
-        @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
+
+        @if($filterCount > 0)
             <div class="active-filters mt-3">
-                <small class="text-muted d-block mb-2"><i class="bi bi-info-circle me-1"></i>Filter Aktif:</small>
-                <div class="d-flex flex-wrap gap-2">
+                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Filter Aktif:</small>
+
+                <div class="d-flex flex-wrap gap-2 mt-2">
+
                     @if(request('item_name'))
                         <span class="filter-chip">
                             <i class="bi bi-search"></i> Nama: {{ request('item_name') }}
                         </span>
                     @endif
+
                     @if(request('category_id'))
                         <span class="filter-chip">
-                            <i class="bi bi-tags"></i> Kategori: {{ $categories->find(request('category_id'))->name ?? '-' }}
+                            <i class="bi bi-tags"></i>
+                            Kategori:
+                            {{ optional($categories->firstWhere('id', request('category_id')))->name ?? '-' }}
                         </span>
                     @endif
+
                     @if(request('status'))
                         <span class="filter-chip">
-                            <i class="bi bi-toggle-on"></i> Status: {{ request('status') == 'active' ? 'Aktif' : 'Tidak Aktif' }}
+                            <i class="bi bi-toggle-on"></i>
+                            Status:
+                            {{ request('status') === 'active' ? 'Aktif' : 'Tidak Aktif' }}
                         </span>
                     @endif
+
                     @if(request('room_id'))
                         <span class="filter-chip">
-                            <i class="bi bi-door-open"></i> Ruangan: {{ $rooms->find(request('room_id'))->name ?? '-' }}
+                            <i class="bi bi-door-open"></i>
+                            Ruangan:
+                            {{ optional($rooms->firstWhere('id', request('room_id')))->name ?? '-' }}
                         </span>
                     @endif
+
                     @if(request('floor_id'))
                         <span class="filter-chip">
-                            <i class="bi bi-building"></i> Lantai: {{ $floors->find(request('floor_id'))->name ?? '-' }}
+                            <i class="bi bi-building"></i>
+                            Lantai:
+                            {{ optional($floors->firstWhere('id', request('floor_id')))->name ?? '-' }}
                         </span>
                     @endif
+
                 </div>
             </div>
         @endif
+
     </div>
 
+
+
     <!-- Filter Modal -->
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal fade" id="filterModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="filterModalLabel">
-                        <i class="bi bi-funnel me-2"></i>Filter Data Perangkat
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+
                 <form method="GET" action="{{ route('items.index') }}">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-funnel me-2"></i>Filter Data Perangkat</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
                     <div class="modal-body">
                         <div class="row g-3">
-                            <!-- Filter Nama Perangkat -->
+
                             <div class="col-md-6">
-                                <label class="form-label-filter">
-                                    <i class="bi bi-search me-1"></i>Nama Perangkat
-                                </label>
-                                <input type="text" 
-                                       name="item_name" 
-                                       class="form-control" 
-                                       placeholder="Cari nama perangkat..."
+                                <label class="form-label-filter">Nama Perangkat</label>
+                                <input type="text" name="item_name" class="form-control"
                                        value="{{ request('item_name') }}">
                             </div>
 
-                            <!-- Filter Kategori -->
                             <div class="col-md-6">
-                                <label class="form-label-filter">
-                                    <i class="bi bi-tags me-1"></i>Kategori
-                                </label>
+                                <label class="form-label-filter">Kategori</label>
                                 <select name="category_id" class="form-select">
-                                    <option value="">Semua Kategori</option>
+                                    <option value="">Semua</option>
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                        <option value="{{ $category->id }}"
+                                            {{ request('category_id') == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <!-- Filter Status -->
                             <div class="col-md-4">
-                                <label class="form-label-filter">
-                                    <i class="bi bi-toggle-on me-1"></i>Status
-                                </label>
+                                <label class="form-label-filter">Status</label>
                                 <select name="status" class="form-select">
-                                    <option value="">Semua Status</option>
-                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                                    <option value="">Semua</option>
+                                    <option value="active" {{ request('status')=='active'?'selected':'' }}>Aktif</option>
+                                    <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>Tidak Aktif</option>
                                 </select>
                             </div>
 
-                            <!-- Filter Ruangan -->
                             <div class="col-md-4">
-                                <label class="form-label-filter">
-                                    <i class="bi bi-door-open me-1"></i>Ruangan
-                                </label>
+                                <label class="form-label-filter">Ruangan</label>
                                 <select name="room_id" class="form-select">
-                                    <option value="">Semua Ruangan</option>
+                                    <option value="">Semua</option>
                                     @foreach($rooms as $room)
-                                        <option value="{{ $room->id }}" {{ request('room_id') == $room->id ? 'selected' : '' }}>
+                                        <option value="{{ $room->id }}" {{ request('room_id')==$room->id?'selected':'' }}>
                                             {{ $room->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <!-- Filter Lantai -->
                             <div class="col-md-4">
-                                <label class="form-label-filter">
-                                    <i class="bi bi-building me-1"></i>Lantai
-                                </label>
+                                <label class="form-label-filter">Lantai</label>
                                 <select name="floor_id" class="form-select">
-                                    <option value="">Semua Lantai</option>
+                                    <option value="">Semua</option>
                                     @foreach($floors as $floor)
-                                        <option value="{{ $floor->id }}" {{ request('floor_id') == $floor->id ? 'selected' : '' }}>
+                                        <option value="{{ $floor->id }}" {{ request('floor_id')==$floor->id?'selected':'' }}>
                                             {{ $floor->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
+
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="bi bi-x-lg me-1"></i>Batal
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg me-1"></i>Terapkan Filter
-                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Terapkan Filter</button>
                     </div>
+
                 </form>
+
             </div>
         </div>
     </div>
 
-    <!-- Table Card -->
+
+
+    <!-- Table -->
     <div class="table-card">
         <div class="table-responsive">
             <table class="custom-table">
@@ -289,102 +279,87 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @forelse($items as $item)
                         <tr>
-                            <td>
-                                <span class="badge-code">{{ $item->code }}</span>
-                            </td>
+                            <td><span class="badge-code">{{ $item->code }}</span></td>
                             <td class="fw-medium">{{ $item->name }}</td>
+                            <td><span class="badge-category">{{ $item->category->name }}</span></td>
+
                             <td>
-                                <span class="badge-category">{{ $item->category->name }}</span>
-                            </td>
-                            <td>
-                                @if($item->status == 'active')
+                                @if($item->status === 'active')
                                     <span class="badge-status success">Aktif</span>
                                 @else
                                     <span class="badge-status warning">Tidak Aktif</span>
                                 @endif
                             </td>
-                            <td>{{$item->room->name }}</td>
-                            <td>{{$item->floor->name}}</td>
+
+                            <td>{{ $item->room->name ?? '-' }}</td>
+                            <td>{{ $item->floor->name ?? '-' }}</td>
+
                             <td>{{ \Carbon\Carbon::parse($item->install_date)->format('d-m-Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->replacement_date)->format('d-m-Y') }}</td>
+
                             <td>
                                 @if($item->photo)
-                                    <img src="{{ asset('storage/'.$item->photo) }}" class="item-thumbnail" alt="{{ $item->name }}">
+                                    <img src="{{ asset('storage/'.$item->photo) }}" class="item-thumbnail">
                                 @else
-                                    <div class="no-image">
-                                        <i class="bi bi-image"></i>
-                                    </div>
+                                    <div class="no-image"><i class="bi bi-image"></i></div>
                                 @endif
                             </td>
+
                             <td>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('items.show', $item->id) }}" class="btn-action info" title="Detail">
+                                    <a href="{{ route('items.show', $item->id) }}" class="btn-action info">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="{{ route('items.edit', $item->id) }}" class="btn-action warning" title="Edit">
+
+                                    <a href="{{ route('items.edit', $item->id) }}" class="btn-action warning">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('items.destroy', $item->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action danger" title="Hapus" onclick="return confirm('Yakin hapus perangkat ini?')">
+
+                                    <form action="{{ route('items.destroy', $item->id) }}" method="POST">
+                                        @csrf @method('DELETE')
+                                        <button class="btn-action danger"
+                                                onclick="return confirm('Yakin hapus perangkat ini?')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
+
                         </tr>
+
                     @empty
                         <tr>
                             <td colspan="10" class="text-center py-5 text-muted">
-                                <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
-                                <p class="mt-2 mb-0">
-                                    @if(request()->hasAny(['item_name', 'category_id', 'status', 'room_id', 'floor_id']))
-                                        Tidak ada perangkat yang sesuai dengan filter
-                                    @else
-                                        Tidak ada data perangkat
-                                    @endif
+                                <i class="bi bi-inbox" style="font-size:3rem;opacity:0.3;"></i>
+                                <p class="mt-2">
+                                    {{ $filterCount>0 ? 'Tidak ada perangkat sesuai filter' : 'Tidak ada data perangkat' }}
                                 </p>
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
+
             </table>
         </div>
 
+
         <!-- Pagination -->
-        @if(method_exists($items, 'links'))
-        <div class="table-footer d-flex justify-content-between align-items-center">
-            <small class="pagination-info">
-                Menampilkan {{ $items->firstItem() ?? 0 }} - {{ $items->lastItem() ?? 0 }} dari {{ $items->total() ?? 0 }} data
-            </small>
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item {{ $items->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ $items->previousPageUrl() }}">Sebelumnya</a>
-                    </li>
-                    @foreach ($items->getUrlRange(1, $items->lastPage()) as $page => $url)
-                        <li class="page-item {{ $items->currentPage() == $page ? 'active' : '' }}">
-                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                        </li>
-                    @endforeach
-                    <li class="page-item {{ $items->hasMorePages() ? '' : 'disabled' }}">
-                        <a class="page-link" href="{{ $items->nextPageUrl() }}">Berikutnya</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        @else
-        <div class="table-footer">
-            <small class="pagination-info">
-                Menampilkan {{ $items->count() }} data
-            </small>
-        </div>
+        @if(method_exists($items,'links'))
+            <div class="table-footer d-flex justify-content-between align-items-center">
+                <small>Menampilkan {{ $items->firstItem() }} - {{ $items->lastItem() }} dari {{ $items->total() }} data</small>
+
+                {{ $items->appends(request()->all())->links() }}
+            </div>
         @endif
+
     </div>
+
+
 </div>
 
 <style>

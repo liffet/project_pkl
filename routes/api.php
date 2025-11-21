@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\DamageReportController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\FloorController;
+use App\Http\Controllers\Api\BuildingController;
 
 // ================== AUTH TANPA LOGIN (REGISTER & LOGIN) ==================
 Route::post('/register', [AuthController::class, 'register']);
@@ -59,6 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/floors', [FloorController::class, 'index']);
     Route::get('/floors/{id}', [FloorController::class, 'show']);
 
+    Route::get('/buildings', [BuildingController::class, 'index']);
+Route::get('/buildings/{id}/floors', [BuildingController::class, 'floors']);
     // ================== Laporan Kerusakan ==================
 
 Route::middleware('auth:sanctum')->group(function () {

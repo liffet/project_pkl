@@ -739,6 +739,15 @@
                     </a>
                 </li>
 
+                <!-- Tambahan untuk Building -->
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('building.index') }}"
+                        class="sidebar-menu-link {{ request()->routeIs('building.*') ? 'active' : '' }}">
+                        <i class="bi bi-bank sidebar-menu-icon"></i>
+                        <span>Gedung</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
 

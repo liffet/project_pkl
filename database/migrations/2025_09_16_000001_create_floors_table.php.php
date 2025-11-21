@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('floors', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique(); // contoh: "Lantai 1", "Lantai 2"
+            $table->foreignId('building_id')->constrained()->onDelete('cascade');
+            $table->string('name'); // contoh: "Lantai 1", "Lantai 2"
             $table->timestamps();
         });
     }

@@ -88,7 +88,7 @@ class FloorController extends Controller
             'message' => 'Lantai berhasil diperbarui',
             'data' => $floor
         ]);
-    }
+    }   
 
     /**
      * Menghapus lantai (admin only)

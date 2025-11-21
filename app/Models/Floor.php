@@ -11,6 +11,7 @@ class Floor extends Model
 
     // Kolom yang bisa diisi
     protected $fillable = [
+        'building_id',
         'name',
     ];
 
@@ -31,4 +32,10 @@ class Floor extends Model
     {
         return $this->hasMany(Item::class);
     }
+
+     public function building()
+    {
+        return $this->belongsTo(Building::class);
+    }
+    
 }

@@ -3,16 +3,22 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Building;
 use App\Models\Floor;
 
 class FloorSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        for ($i = 1; $i <= 25; $i++) {
-            Floor::create([
-                'name' => 'Lantai ' . $i,
-            ]);
+        $buildings = Building::all();
+
+        foreach ($buildings as $building) {
+            for ($i = 1; $i <= $building->total_floors; $i++) {
+                Floor::create([
+                    'building_id' => $building->id,
+                    'name' => 'Lantai ' . $i,
+                ]);
+            }   
         }
     }
 }
