@@ -1,481 +1,302 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid px-4 py-4">
+<div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <!-- Page Header -->
-            <div class="mb-4">
-                <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">Tambah Perangkat Baru</h2>
-                <p class="text-muted mb-0" style="font-size: 0.875rem;">Lengkapi formulir di bawah untuk menambahkan perangkat baru</p>
+            <!-- Header Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body bg-gradient-primary text-white rounded">
+                    <h4 class="mb-1">
+                        <i class="bi bi-plus-circle me-2"></i>Tambah Perangkat Baru
+                    </h4>
+                    <p class="mb-0 opacity-90">Lengkapi formulir di bawah untuk menambahkan perangkat baru</p>
+                </div>
             </div>
 
             @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 1.25rem;"></i>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-2 fw-semibold">Terdapat Kesalahan Input!</h6>
-                            <ul class="mb-0 ps-3">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h6 class="alert-heading mb-2">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Terdapat Kesalahan Input!
+                </h6>
+                <ul class="mb-0 ps-3">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             @endif
 
             <form action="{{ route('items.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                <div class="row g-4">
-                    <!-- Left Column - Informasi Dasar -->
-                    <div class="col-lg-6">
-                        <div class="form-card">
-                            <div class="form-card-header">
-                                <i class="bi bi-info-circle"></i>
-                                <span>Informasi Dasar</span>
-                            </div>
-                            <div class="form-card-body">
-                                <!-- Kode Perangkat -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-upc-scan"></i>
-                                        Kode Perangkat
-                                    </label>
-                                    <input type="text" 
-                                           name="code" 
-                                           class="form-control" 
-                                           value="{{ old('code') }}" 
-                                           placeholder="Kosongkan untuk generate otomatis">
-                                    <small class="form-text">
-                                        <i class="bi bi-info-circle"></i>
-                                        Biarkan kosong untuk generate otomatis
-                                    </small>
-                                </div>
-
-                                <!-- Kategori -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-grid-3x3-gap"></i>
-                                        Kategori
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <select name="category_id" class="form-select" required>
-                                        <option value="">-- Pilih Kategori --</option>
-                                        @foreach($categories as $cat)
-                                            <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
-                                                {{ $cat->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <!-- Nama Perangkat -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-laptop"></i>
-                                        Nama Perangkat
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" 
-                                           name="name" 
-                                           class="form-control" 
-                                           value="{{ old('name') }}" 
-                                           placeholder="Masukkan nama perangkat" 
-                                           required>
-                                </div>
-
-                                <!-- Status -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-circle-fill"></i>
-                                        Status
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                   <select name="status" class="form-select" required id="status-select">
-    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
-</select>
-
-                                </div>
-                            </div>
-                        </div>
+                <!-- Informasi Dasar -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle me-2 text-primary"></i>Informasi Dasar
+                        </h5>
                     </div>
-
-                    <!-- Right Column - Lokasi & Jadwal -->
-                    <div class="col-lg-6">
-                        <div class="form-card">
-                            <div class="form-card-header">
-                                <i class="bi bi-geo-alt"></i>
-                                <span>Lokasi & Jadwal</span>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Kode Perangkat</label>
+                                <input type="text" name="code" class="form-control" 
+                                       value="{{ old('code') }}" 
+                                       placeholder="Contoh: ITM-001">
+                                <small class="text-muted">Biarkan kosong untuk generate otomatis</small>
                             </div>
-                            <div class="form-card-body">
-                  <!-- Ruangan -->
-<div class="form-group">
-    <label class="form-label">
-        <i class="bi bi-door-open"></i> Ruangan <span class="text-danger">*</span>
-    </label>
-    <select name="room_id" class="form-select" required>
-        <option value="">-- Pilih Ruangan --</option>
-        @foreach($rooms as $room)
-            <option value="{{ $room->id }}" {{ old('room_id') == $room->id ? 'selected' : '' }}>
-                {{ $room->name }}
-            </option>
-        @endforeach
-    </select>
-</div>
 
-<!-- Lantai -->
-<div class="form-group">
-    <label class="form-label">
-        <i class="bi bi-building"></i> Lantai <span class="text-danger">*</span>
-    </label>
-    <select name="floor_id" class="form-select" required>
-        <option value="">-- Pilih Lantai --</option>
-        @foreach($floors as $floor)
-            <option value="{{ $floor->id }}" {{ old('floor_id') == $floor->id ? 'selected' : '' }}>
-                {{ $floor->name }}
-            </option>
-        @endforeach
-    </select>
-</div>
-    
-
-
-                                <!-- Tanggal Pasang -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-calendar-check"></i>
-                                        Tanggal Pasang
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="date" 
-                                           name="install_date" 
-                                           class="form-control" 
-                                           value="{{ old('install_date') }}" 
-                                           required>
-                                </div>
-
-                                <!-- Tanggal Pergantian -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-wrench"></i>
-                                        Tanggal Pergantian
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="date" 
-                                           name="replacement_date" 
-                                           class="form-control" 
-                                           value="{{ old('replacement_date') }}" 
-                                           required>
-                                    <small class="form-text">
-                                        <i class="bi bi-info-circle"></i>
-                                        Jadwal penggantian/maintenance berkala
-                                    </small>
-                                </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kategori <span class="text-danger">*</span></label>
+                                <select name="category_id" class="form-select" required>
+                                    <option value="">-- Pilih Kategori --</option>
+                                    @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Full Width - Foto Perangkat -->
-                    <div class="col-12">
-                        <div class="form-card">
-                            <div class="form-card-header">
-                                <i class="bi bi-image"></i>
-                                <span>Foto Perangkat</span>
+                            <div class="col-md-8">
+                                <label class="form-label">Nama Perangkat <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" 
+                                       value="{{ old('name') }}" 
+                                       placeholder="Contoh: Komputer HP EliteDesk" required>
                             </div>
-                            <div class="form-card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-0">
-                                            <label class="form-label">
-                                                <i class="bi bi-camera"></i>
-                                                Upload Foto
-                                            </label>
-                                            <input type="file" 
-                                                   name="photo" 
-                                                   class="form-control" 
-                                                   onchange="previewImage(event)" 
-                                                   accept="image/*">
-                                            <small class="form-text">
-                                                <i class="bi bi-info-circle"></i>
-                                                Format: JPG, PNG, GIF (Max. 2MB)
-                                            </small>
-                                        </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Status <span class="text-danger">*</span></label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" 
+                                               id="statusActive" value="active" 
+                                               {{ old('status', 'active') == 'active' ? 'checked' : '' }} required>
+                                        <label class="form-check-label" for="statusActive">
+                                            <i class="bi bi-check-circle text-success"></i> Aktif
+                                        </label>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="preview-container">
-                                            <div id="no-preview" class="no-preview">
-                                                <i class="bi bi-image"></i>
-                                                <p>Belum ada foto dipilih</p>
-                                            </div>
-                                            <div id="preview-container" class="image-preview" style="display:none;">
-                                                <img id="preview" src="#" alt="Preview">
-                                            </div>
-                                        </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" 
+                                               id="statusInactive" value="inactive" 
+                                               {{ old('status') == 'inactive' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="statusInactive">
+                                            <i class="bi bi-x-circle text-danger"></i> Tidak Aktif
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Action Buttons -->
-                    <div class="col-12">
-                        <div class="form-actions">
-                            <a href="{{ route('items.index') }}" class="btn-cancel">
-                                <i class="bi bi-x-circle"></i>
-                                Batal
-                            </a>
-                            <button type="submit" class="btn-submit">
-                                <i class="bi bi-check-circle"></i>
-                                Simpan Perangkat
-                            </button>
+                <!-- Lokasi & Jadwal -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>Lokasi & Jadwal
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <!-- Gedung -->
+                            <div class="col-md-4">
+                                <label class="form-label">Gedung <span class="text-danger">*</span></label>
+                                <select name="building_id" id="building_id" class="form-select" required>
+                                    <option value="">-- Pilih Gedung --</option>
+                                    @foreach($buildings as $building)
+                                    <option value="{{ $building->id }}" {{ old('building_id') == $building->id ? 'selected' : '' }}>
+                                        {{ $building->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Lantai -->
+                            <div class="col-md-4">
+                                <label class="form-label">Lantai <span class="text-danger">*</span></label>
+                                <select name="floor_id" id="floor_id" class="form-select" required disabled>
+                                    <option value="">-- Pilih Gedung Dulu --</option>
+                                </select>
+                            </div>
+
+                            <!-- Ruangan -->
+                            <div class="col-md-4">
+                                <label class="form-label">Ruangan <span class="text-danger">*</span></label>
+                                <select name="room_id" id="room_id" class="form-select" required disabled>
+                                    <option value="">-- Pilih Lantai Dulu --</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Pasang <span class="text-danger">*</span></label>
+                                <input type="date" name="install_date" class="form-control" 
+                                       value="{{ old('install_date') }}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Pergantian <span class="text-danger">*</span></label>
+                                <input type="date" name="replacement_date" class="form-control" 
+                                       value="{{ old('replacement_date') }}" required>
+                                <small class="text-muted">Jadwal penggantian/maintenance berkala</small>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Foto Perangkat -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-camera me-2 text-primary"></i>Foto Perangkat
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Upload Foto</label>
+                            <input type="file" name="photo" class="form-control" 
+                                   accept="image/jpeg,image/png,image/gif" id="photoInput">
+                            <small class="text-muted">Format: JPG, PNG, GIF (Max. 2MB)</small>
+                        </div>
+                        <div class="text-center">
+                            <img id="photoPreview" src="#" alt="Preview" 
+                                 style="max-width: 300px; max-height: 300px; display: none;" 
+                                 class="img-thumbnail">
+                            <p id="photoPlaceholder" class="text-muted">
+                                <i class="bi bi-image fs-1 d-block mb-2"></i>
+                                Belum ada foto dipilih
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="{{ route('items.index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i> Batal
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i> Simpan Perangkat
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<style>
-/* Form Card */
-.form-card {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
-}
-
-.form-card-header {
-    background: #2D4194;
-    color: white;
-    padding: 1rem 1.5rem;
-    font-weight: 600;
-    font-size: 0.9375rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.form-card-header i {
-    font-size: 1.125rem;
-}
-
-.form-card-body {
-    padding: 1.5rem;
-}
-
-/* Form Group */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group:last-child {
-    margin-bottom: 0;
-}
-
-.form-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 0.5rem;
-}
-
-.form-label i {
-    font-size: 1rem;
-    color: #6b7280;
-}
-
-.form-label .text-danger {
-    margin-left: auto;
-}
-
-/* Form Controls */
-.form-control,
-.form-select {
-    padding: 0.625rem 0.875rem;
-    font-size: 0.875rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    transition: all 0.2s;
-}
-
-.form-control:focus,
-.form-select:focus {
-    border-color: #2D4194;
-    box-shadow: 0 0 0 3px rgba(45, 65, 148, 0.1);
-    outline: none;
-}
-
-.form-control::placeholder {
-    color: #9ca3af;
-}
-
-.form-text {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.75rem;
-    color: #6b7280;
-    margin-top: 0.375rem;
-}
-
-.form-text i {
-    font-size: 0.875rem;
-}
-
-/* Preview Container */
-.preview-container {
-    height: 100%;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.no-preview {
-    text-align: center;
-    color: #9ca3af;
-}
-
-.no-preview i {
-    font-size: 3rem;
-    opacity: 0.3;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.no-preview p {
-    font-size: 0.875rem;
-    margin: 0;
-}
-
-.image-preview {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.image-preview img {
-    max-width: 100%;
-    max-height: 250px;
-    border-radius: 8px;
-    border: 2px solid #e5e7eb;
-}
-
-/* Action Buttons */
-.form-actions {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    padding: 1.5rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-}
-
-.btn-cancel {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.5rem;
-    background: white;
-    color: #ef4444;
-    border: 1px solid #ef4444;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.btn-cancel:hover {
-    background: #fef2f2;
-    color: #dc2626;
-}
-
-.btn-submit {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.5rem;
-    background: #10b981;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-submit:hover {
-    background: #059669;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-/* Alert */
-.alert {
-    border-radius: 12px;
-    border: 1px solid #fecaca;
-    padding: 1rem 1.25rem;
-}
-
-.alert-danger {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.alert h6 {
-    font-size: 0.875rem;
-    margin: 0;
-}
-
-.alert ul {
-    font-size: 0.8125rem;
-    margin: 0;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .btn-cancel,
-    .btn-submit {
-        width: 100%;
-        justify-content: center;
-    }
-}
-</style>
-
+@push('scripts')
 <script>
-function previewImage(event) {
-    const file = event.target.files[0];
-    if (file) {
-        let reader = new FileReader();
-        reader.onload = function(){
-            let output = document.getElementById('preview');
-            let container = document.getElementById('preview-container');
-            let noPreview = document.getElementById('no-preview');
-            
-            output.src = reader.result;
-            container.style.display = 'flex';
-            noPreview.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
+document.addEventListener('DOMContentLoaded', function() {
+    const buildingSelect = document.getElementById('building_id');
+    const floorSelect = document.getElementById('floor_id');
+    const roomSelect = document.getElementById('room_id');
+    const photoInput = document.getElementById('photoInput');
+    const photoPreview = document.getElementById('photoPreview');
+    const photoPlaceholder = document.getElementById('photoPlaceholder');
+
+    // Handle foto preview
+    if (photoInput) {
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoPreview.src = e.target.result;
+                    photoPreview.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
     }
-}
+
+    // Handle gedung change - load lantai
+    buildingSelect.addEventListener('change', function() {
+        const buildingId = this.value;
+        
+        // Reset floor dan room
+        floorSelect.innerHTML = '<option value="">-- Pilih Lantai --</option>';
+        floorSelect.disabled = true;
+        roomSelect.innerHTML = '<option value="">-- Pilih Lantai Dulu --</option>';
+        roomSelect.disabled = true;
+
+        if (buildingId) {
+            // Fetch floors berdasarkan gedung
+            fetch(`/api/floors/by-building/${buildingId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.floors.length > 0) {
+                        floorSelect.disabled = false;
+                        data.floors.forEach(floor => {
+                            const option = document.createElement('option');
+                            option.value = floor.id;
+                            option.textContent = floor.name;
+                            floorSelect.appendChild(option);
+                        });
+                    } else {
+                        floorSelect.innerHTML = '<option value="">-- Tidak ada lantai --</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal memuat data lantai');
+                });
+        }
+    });
+
+    // Handle lantai change - load ruangan
+    floorSelect.addEventListener('change', function() {
+        const floorId = this.value;
+        
+        // Reset room
+        roomSelect.innerHTML = '<option value="">-- Pilih Ruangan --</option>';
+        roomSelect.disabled = true;
+
+        if (floorId) {
+            // Fetch rooms berdasarkan lantai
+            fetch(`/api/rooms/by-floor/${floorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.rooms.length > 0) {
+                        roomSelect.disabled = false;
+                        data.rooms.forEach(room => {
+                            const option = document.createElement('option');
+                            option.value = room.id;
+                            option.textContent = room.name;
+                            roomSelect.appendChild(option);
+                        });
+                    } else {
+                        roomSelect.innerHTML = '<option value="">-- Tidak ada ruangan --</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal memuat data ruangan');
+                });
+        }
+    });
+
+    // Restore old values jika ada error validation
+    @if(old('building_id'))
+        buildingSelect.value = '{{ old('building_id') }}';
+        buildingSelect.dispatchEvent(new Event('change'));
+        
+        setTimeout(() => {
+            @if(old('floor_id'))
+                floorSelect.value = '{{ old('floor_id') }}';
+                floorSelect.dispatchEvent(new Event('change'));
+                
+                setTimeout(() => {
+                    @if(old('room_id'))
+                        roomSelect.value = '{{ old('room_id') }}';
+                    @endif
+                }, 500);
+            @endif
+        }, 500);
+    @endif
+});
 </script>
+@endpush
 @endsection

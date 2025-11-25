@@ -113,42 +113,92 @@
 
                     <!-- Right Column - Lokasi & Jadwal -->
                     <div class="col-lg-6">
-                        <div class="form-card">
-                            <div class="form-card-header">
-                                <i class="bi bi-geo-alt"></i>
-                                <span>Lokasi & Jadwal</span>
-                            </div>
-                            <div class="form-card-body">
-                                <!-- Ruangan -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-door-open"></i> Ruangan <span class="text-danger">*</span>
-                                    </label>
-                                    <select name="room_id" class="form-select" required>
-                                        <option value="">-- Pilih Ruangan --</option>
-                                        @foreach($rooms as $room)
-                                        <option value="{{ $room->id }}" {{ old('room_id', $item->room_id) == $room->id ? 'selected' : '' }}>
-                                            {{ $room->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+    <div class="form-card">
+        <div class="form-card-header">
+            <i class="bi bi-geo-alt"></i>
+            <span>Lokasi & Jadwal</span>
+        </div>
+        <div class="form-card-body">
+            <!-- Gedung -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-buildings"></i> Gedung <span class="text-danger">*</span>
+                </label>
+                <select name="building_id" id="building_id" class="form-select" required>
+                    <option value="">-- Pilih Gedung --</option>
+                    @foreach($buildings as $building)
+                    <option value="{{ $building->id }}" {{ old('building_id', $item->building_id) == $building->id ? 'selected' : '' }}>
+                        {{ $building->name }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
 
-                                <!-- Lantai -->
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-building"></i> Lantai <span class="text-danger">*</span>
-                                    </label>
-                                    <select name="floor_id" class="form-select" required>
-                                        <option value="">-- Pilih Lantai --</option>
-                                        @foreach($floors as $floor)
-                                        <option value="{{ $floor->id }}" {{ old('floor_id', $item->floor_id) == $floor->id ? 'selected' : '' }}>
-                                            {{ $floor->name }}
-                                        </option>
+            <!-- Lantai -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-building"></i> Lantai <span class="text-danger">*</span>
+                </label>
+                <select name="floor_id" id="floor_id" class="form-select" required>
+                    <option value="">-- Pilih Gedung Dulu --</option>
+                    @foreach($floors as $floor)
+                    <option value="{{ $floor->id }}" 
+                            data-building="{{ $floor->building_id }}"
+                            {{ old('floor_id', $item->floor_id) == $floor->id ? 'selected' : '' }}>
+                        {{ $floor->name }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
 
-                                        @endforeach
-                                    </select>
-                                </div>
+            <!-- Ruangan -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-door-open"></i> Ruangan <span class="text-danger">*</span>
+                </label>
+                <select name="room_id" class="form-select" required>
+                    <option value="">-- Pilih Ruangan --</option>
+                    @foreach($rooms as $room)
+                    <option value="{{ $room->id }}" {{ old('room_id', $item->room_id) == $room->id ? 'selected' : '' }}>
+                        {{ $room->name }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Tanggal Pasang & Pergantian tetap sama -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-calendar-check"></i>
+                    Tanggal Pasang
+                    <span class="text-danger">*</span>
+                </label>
+                <input type="date"
+                    name="install_date"
+                    class="form-control"
+                    value="{{ old('install_date', $item->install_date) }}"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-wrench"></i>
+                    Tanggal Pergantian
+                    <span class="text-danger">*</span>
+                </label>
+                <input type="date"
+                    name="replacement_date"
+                    class="form-control"
+                    value="{{ old('replacement_date', $item->replacement_date) }}"
+                    required>
+                <small class="form-text">
+                    <i class="bi bi-info-circle"></i>
+                    Jadwal penggantian/maintenance berkala
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -534,6 +584,45 @@
 </style>
 
 <script>
+
+        // Dynamic Floor Filter berdasarkan Gedung
+    document.addEventListener('DOMContentLoaded', function() {
+        const buildingSelect = document.getElementById('building_id');
+        const floorSelect = document.getElementById('floor_id');
+        const allFloors = Array.from(floorSelect.querySelectorAll('option[data-building]'));
+
+        function filterFloors() {
+            const buildingId = buildingSelect.value;
+            
+            // Reset
+            floorSelect.innerHTML = '<option value="">-- Pilih Lantai --</option>';
+            
+            if (buildingId) {
+                // Filter lantai by building
+                allFloors.forEach(option => {
+                    if (option.dataset.building == buildingId) {
+                        floorSelect.appendChild(option.cloneNode(true));
+                    }
+                });
+                
+                floorSelect.disabled = false;
+            } else {
+                floorSelect.disabled = true;
+            }
+        }
+
+        buildingSelect.addEventListener('change', filterFloors);
+        
+        // Init on load
+        if (buildingSelect.value) {
+            filterFloors();
+            // Restore selected floor
+            setTimeout(() => {
+                floorSelect.value = '{{ old('floor_id', $item->floor_id) }}';
+            }, 100);
+        }
+    });
+    
     function previewImage(event) {
         const file = event.target.files[0];
         if (file) {

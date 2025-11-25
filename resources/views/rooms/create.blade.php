@@ -78,6 +78,36 @@
                             @enderror
                         </div>
 
+                        <!-- Gedung -->
+                        <div class="form-group">
+                            <label for="building_id" class="form-label">
+                                <i class="bi bi-buildings"></i>
+                                Gedung
+                                <span class="text-danger">*</span>
+                            </label>
+                            <select 
+                                name="building_id" 
+                                id="building_id"
+                                class="form-select @error('building_id') is-invalid @enderror"
+                                required>
+                                <option value="">-- Pilih Gedung --</option>
+                                @foreach($buildings as $building)
+                                    <option value="{{ $building->id }}" {{ old('building_id') == $building->id ? 'selected' : '' }}>
+                                        {{ $building->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('building_id')
+                                <div class="invalid-feedback d-block mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                            @else
+                                <small class="form-text">
+                                    <i class="bi bi-info-circle"></i> Pilih gedung terlebih dahulu untuk memilih lantai.
+                                </small>
+                            @enderror
+                        </div>
+
                         <!-- Lantai -->
                         <div class="form-group">
                             <label for="floor_id" class="form-label">
@@ -89,13 +119,9 @@
                                 name="floor_id" 
                                 id="floor_id"
                                 class="form-select @error('floor_id') is-invalid @enderror"
-                                required>
-                                <option value="">-- Pilih Lantai --</option>
-                                @foreach($floors as $floor)
-                                    <option value="{{ $floor->id }}" {{ old('floor_id') == $floor->id ? 'selected' : '' }}>
-                                        {{ $floor->name }}
-                                    </option>
-                                @endforeach
+                                required
+                                disabled>
+                                <option value="">-- Pilih Gedung Dulu --</option>
                             </select>
                             @error('floor_id')
                                 <div class="invalid-feedback d-block mt-1">
@@ -118,7 +144,7 @@
                                 <div class="preview-icon text-white me-3" id="previewAvatar">?</div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-0 fw-semibold" id="previewName">Nama Ruangan</h6>
-                                    <small class="text-muted" id="previewFloor">Pilih lantai terlebih dahulu</small>
+                                    <small class="text-muted" id="previewLocation">Pilih gedung dan lantai terlebih dahulu</small>
                                 </div>
                             </div>
                         </div>
@@ -160,6 +186,7 @@
                         <li>Sertakan fungsi atau tipe ruangan jika perlu (Lab, Ruang Meeting, dll)</li>
                         <li>Pastikan nama belum digunakan di lantai yang sama</li>
                         <li>Gunakan huruf kapital di awal kata untuk konsistensi</li>
+                        <li>Pilih gedung terlebih dahulu sebelum memilih lantai</li>
                     </ul>
                 </div>
             </div>
@@ -220,6 +247,11 @@
 .form-control:focus, .form-select:focus {
     border-color: #2D4194;
     box-shadow: 0 0 0 3px rgba(45, 65, 148, 0.1);
+}
+
+.form-select:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
 }
 
 .preview-box {
@@ -352,16 +384,56 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const nameInput = document.getElementById('name');
+    const buildingSelect = document.getElementById('building_id');
     const floorSelect = document.getElementById('floor_id');
     const charCount = document.getElementById('charCount');
     const previewName = document.getElementById('previewName');
-    const previewFloor = document.getElementById('previewFloor');
+    const previewLocation = document.getElementById('previewLocation');
     const previewAvatar = document.getElementById('previewAvatar');
     const form = document.getElementById('roomForm');
 
+    // Dynamic floor loading berdasarkan gedung
+    buildingSelect.addEventListener('change', function() {
+        const buildingId = this.value;
+        
+        floorSelect.innerHTML = '<option value="">-- Memuat lantai... --</option>';
+        floorSelect.disabled = true;
+
+        if (buildingId) {
+            fetch(`/api/floors/by-building/${buildingId}`)
+                .then(response => response.json())
+                .then(data => {
+                    floorSelect.innerHTML = '<option value="">-- Pilih Lantai --</option>';
+                    
+                    if (data.success && data.floors.length > 0) {
+                        floorSelect.disabled = false;
+                        data.floors.forEach(floor => {
+                            const option = document.createElement('option');
+                            option.value = floor.id;
+                            option.textContent = floor.name;
+                            floorSelect.appendChild(option);
+                        });
+                    } else {
+                        floorSelect.innerHTML = '<option value="">-- Tidak ada lantai --</option>';
+                    }
+                    
+                    updatePreview();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal memuat data lantai');
+                    floorSelect.innerHTML = '<option value="">-- Error memuat lantai --</option>';
+                });
+        } else {
+            floorSelect.innerHTML = '<option value="">-- Pilih Gedung Dulu --</option>';
+            updatePreview();
+        }
+    });
+
     function updatePreview() {
         const nameValue = nameInput.value.trim();
-        const floorText = floorSelect.options[floorSelect.selectedIndex].text;
+        const buildingText = buildingSelect.options[buildingSelect.selectedIndex]?.text || '';
+        const floorText = floorSelect.options[floorSelect.selectedIndex]?.text || '';
         
         charCount.textContent = nameValue.length;
 
@@ -374,11 +446,13 @@ document.addEventListener('DOMContentLoaded', function() {
             previewAvatar.textContent = '?';
         }
 
-        // Update lantai
-        if (floorSelect.value) {
-            previewFloor.textContent = floorText;
+        // Update lokasi
+        if (buildingSelect.value && floorSelect.value) {
+            previewLocation.textContent = `${buildingText} - ${floorText}`;
+        } else if (buildingSelect.value) {
+            previewLocation.textContent = `${buildingText} - Pilih lantai`;
         } else {
-            previewFloor.textContent = 'Pilih lantai terlebih dahulu';
+            previewLocation.textContent = 'Pilih gedung dan lantai terlebih dahulu';
         }
     }
 
@@ -394,13 +468,29 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('reset', function() {
         setTimeout(() => {
             nameInput.value = '';
+            buildingSelect.selectedIndex = 0;
             floorSelect.selectedIndex = 0;
+            floorSelect.disabled = true;
+            floorSelect.innerHTML = '<option value="">-- Pilih Gedung Dulu --</option>';
             charCount.textContent = '0';
             previewName.textContent = 'Nama Ruangan';
-            previewFloor.textContent = 'Pilih lantai terlebih dahulu';
+            previewLocation.textContent = 'Pilih gedung dan lantai terlebih dahulu';
             previewAvatar.textContent = '?';
         }, 0);
     });
+
+    // Restore old values jika ada error validation
+    @if(old('building_id'))
+        buildingSelect.value = '{{ old('building_id') }}';
+        buildingSelect.dispatchEvent(new Event('change'));
+        
+        setTimeout(() => {
+            @if(old('floor_id'))
+                floorSelect.value = '{{ old('floor_id') }}';
+                updatePreview();
+            @endif
+        }, 500);
+    @endif
 
     // Inisialisasi awal
     updatePreview();

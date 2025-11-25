@@ -154,6 +154,14 @@
                         </span>
                     @endif
 
+                    @if(request('building_id'))
+    <span class="filter-chip">
+        <i class="bi bi-building"></i>
+        Gedung:
+        {{ optional($buildings->firstWhere('id', request('building_id')))->name ?? '-' }}
+    </span>
+@endif
+
                     @if(request('room_id'))
                         <span class="filter-chip">
                             <i class="bi bi-door-open"></i>
@@ -222,6 +230,18 @@
                             </div>
 
                             <div class="col-md-4">
+    <label class="form-label-filter">Gedung</label>
+    <select name="building_id" class="form-select">
+        <option value="">Semua</option>
+        @foreach($buildings as $building)
+            <option value="{{ $building->id }}" {{ request('building_id')==$building->id?'selected':'' }}>
+                {{ $building->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+                            <div class="col-md-4">
                                 <label class="form-label-filter">Ruangan</label>
                                 <select name="room_id" class="form-select">
                                     <option value="">Semua</option>
@@ -271,6 +291,7 @@
                         <th>Nama</th>
                         <th>Kategori</th>
                         <th>Status</th>
+                        <th>Gedung</th> <!-- ← TAMBAHKAN INI -->
                         <th>Ruangan</th>
                         <th>Lantai</th>
                         <th>Tgl Pasang</th>
@@ -295,6 +316,7 @@
                                 @endif
                             </td>
 
+                            <td>{{ $item->building->name ?? '-' }}</td>
                             <td>{{ $item->room->name ?? '-' }}</td>
                             <td>{{ $item->floor->name ?? '-' }}</td>
 
@@ -334,7 +356,7 @@
 
                     @empty
                         <tr>
-                            <td colspan="10" class="text-center py-5 text-muted">
+                            <td colspan="11" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox" style="font-size:3rem;opacity:0.3;"></i>
                                 <p class="mt-2">
                                     {{ $filterCount>0 ? 'Tidak ada perangkat sesuai filter' : 'Tidak ada data perangkat' }}

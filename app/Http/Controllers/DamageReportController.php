@@ -19,29 +19,72 @@ class DamageReportController extends Controller
     }
 
     /**
-     * Menampilkan daftar laporan kerusakan
+     * Menampilkan daftar laporan kerusakan dengan tab
      */
-    public function index()
+    public function index(Request $request)
     {
-        $reports = DamageReport::with([
+        // Ambil tab aktif dari request, default ke 'all'
+        $activeTab = $request->get('tab', 'all');
+
+        // Query untuk semua laporan (tab All)
+        $allReports = DamageReport::with([
             'user',
             'item.category',
             'item.room',
-            'item.floor'
-        ])->latest()->paginate(10);
+            'item.floor',
+            'item.building' // ← Tambahkan relasi building
+        ])->latest()->paginate(10, ['*'], 'all_page');
 
+        // Query untuk pending (tab Pending)
+        $pendingList = DamageReport::with([
+            'user',
+            'item.category',
+            'item.room',
+            'item.floor',
+            'item.building'
+        ])->where('status', 'pending')
+            ->latest()
+            ->paginate(10, ['*'], 'pending_page');
+
+        // Query untuk accepted (tab Diterima)
+        $acceptedList = DamageReport::with([
+            'user',
+            'item.category',
+            'item.room',
+            'item.floor',
+            'item.building'
+        ])->where('status', 'accepted')
+            ->latest()
+            ->paginate(10, ['*'], 'accepted_page');
+
+        // Query untuk rejected (tab Ditolak)
+        $rejectedList = DamageReport::with([
+            'user',
+            'item.category',
+            'item.room',
+            'item.floor',
+            'item.building'
+        ])->where('status', 'rejected')
+            ->latest()
+            ->paginate(10, ['*'], 'rejected_page');
+
+        // Statistik
         $totalReports = DamageReport::count();
         $pendingReports = DamageReport::where('status', 'pending')->count();
         $acceptedReports = DamageReport::where('status', 'accepted')->count();
         $rejectedReports = DamageReport::where('status', 'rejected')->count();
 
         return view('reports.index', compact(
-            'reports',
-            'totalReports',
-            'pendingReports',
-            'acceptedReports',
-            'rejectedReports'
-        ));
+    'activeTab',
+    'allReports',
+    'pendingList',
+    'acceptedList',
+    'rejectedList',
+    'totalReports',
+    'pendingReports',
+    'acceptedReports',
+    'rejectedReports'
+));
     }
 
     /**
@@ -53,10 +96,11 @@ class DamageReportController extends Controller
             'user',
             'item.category',
             'item.room',
-            'item.floor'
+            'item.floor',
+            'item.building' // ← Tambahkan relasi building
         ])->findOrFail($id);
 
-        return view('reports.show', compact('report'));
+        return view('damage-reports.show', compact('report'));
     }
 
     /**
@@ -100,7 +144,12 @@ class DamageReportController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('damage-reports.index')->with('success', 'Status laporan berhasil diperbarui.');
+        // Redirect ke tab yang sesuai dengan query string
+        $tab = $request->get('tab', 'all');
+        
+        return redirect()
+            ->route('damage-reports.index', ['tab' => $tab])
+            ->with('success', 'Status laporan berhasil diperbarui.');
     }
 
     /**

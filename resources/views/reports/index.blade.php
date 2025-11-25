@@ -132,6 +132,7 @@
                                 <th>Perangkat</th>
                                 <th>Kode Perangkat</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
@@ -150,6 +151,7 @@
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
                                 <td>{{ $report->item->category->name ?? '-' }}</td>
+                                <td>{{ $report->item->building->name ?? '-' }}</td>
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
@@ -262,6 +264,7 @@
                                 <th>Perangkat</th>
                                 <th>Kode Perangkat</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
@@ -280,6 +283,7 @@
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
                                 <td>{{ $report->item->category->name ?? '-' }}</td>
+                                <td>{{ $report->item->building->name ?? '-' }}</td>
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
@@ -384,6 +388,7 @@
                                 <th>Perangkat</th>
                                 <th>Kode Perangkat</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
@@ -401,6 +406,7 @@
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
                                 <td>{{ $report->item->category->name ?? '-' }}</td>
+                                <td>{{ $report->item->building->name ?? '-' }}</td>
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>
@@ -485,6 +491,7 @@
                                 <th>Perangkat</th>
                                 <th>Kode Perangkat</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Ruangan</th>
                                 <th>Lantai</th>
                                 <th>Alasan Kerusakan</th>
@@ -502,6 +509,7 @@
                                 <td>{{ $report->item->name ?? '-' }}</td>
                                 <td>{{ $report->item->code ?? '-' }}</td>
                                 <td>{{ $report->item->category->name ?? '-' }}</td>
+                                <td>{{ $report->item->building->name ?? '-' }}</td>
                                 <td>{{ $report->item->room->name ?? '-' }}</td>
                                 <td>{{ $report->item->floor->name ?? '-' }}</td>
                                 <td>{{ $report->reason }}</td>

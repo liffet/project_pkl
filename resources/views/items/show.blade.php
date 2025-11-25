@@ -68,6 +68,13 @@
                             </div>
 
                             <div class="col-md-6">
+    <div class="info-box">
+        <small class="text-muted"><i class="bi bi-buildings me-1"></i>Gedung</small>
+        <strong class="d-block mt-1">{{ $item->building->name ?? '-' }}</strong>
+    </div>
+</div>
+
+                            <div class="col-md-6">
                                 <div class="info-box">
                                     <small class="text-muted"><i class="bi bi-door-open me-1"></i>Ruangan</small>
                                     <strong class="d-block mt-1">{{ $item->room->name }}</strong>

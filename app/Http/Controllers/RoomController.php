@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Floor;
+use App\Models\Building; // ← TAMBAHKAN INI
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,139 +17,143 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::with('floor')->get();
+        $rooms = Room::with(['floor.building'])->get(); // ← TAMBAHKAN RELASI BUILDING
         return view('rooms.index', compact('rooms'));
     }
 
     /**
      * Menampilkan form tambah ruangan.
      */
-  // RoomController.php
+    public function create()
+    {
+        $buildings = Building::all(); // ← TAMBAHKAN INI
+        $floors = Floor::all();
+        return view('rooms.create', compact('buildings', 'floors'));
+    }
 
-public function create()
-{
-    $floors = Floor::all();
-    return view('rooms.create', compact('floors'));
-}
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    // Validasi unique: nama ruangan harus unik per lantai
+                    Rule::unique('rooms')->where(function ($query) use ($request) {
+                        return $query->where('floor_id', $request->floor_id);
+                    })
+                ],
+                'building_id' => 'required|exists:buildings,id', // ← TAMBAHKAN INI
+                'floor_id' => 'required|exists:floors,id'
+            ], [
+                'name.required' => 'Nama ruangan wajib diisi',
+                'name.max' => 'Nama ruangan maksimal 255 karakter',
+                'name.unique' => 'Nama ruangan sudah digunakan di lantai ini. Silakan gunakan nama lain.',
+                'building_id.required' => 'Gedung wajib dipilih', // ← TAMBAHKAN INI
+                'building_id.exists' => 'Gedung yang dipilih tidak valid', // ← TAMBAHKAN INI
+                'floor_id.required' => 'Lantai wajib dipilih',
+                'floor_id.exists' => 'Lantai yang dipilih tidak valid'
+            ]);
 
-public function store(Request $request)
-{
-    try {
-        $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                // Validasi unique: nama ruangan harus unik per lantai
-                Rule::unique('rooms')->where(function ($query) use ($request) {
-                    return $query->where('floor_id', $request->floor_id);
-                })
-            ],
-            'floor_id' => 'required|exists:floors,id'
-        ], [
-            'name.required' => 'Nama ruangan wajib diisi',
-            'name.max' => 'Nama ruangan maksimal 255 karakter',
-            'name.unique' => 'Nama ruangan sudah digunakan di lantai ini. Silakan gunakan nama lain.',
-            'floor_id.required' => 'Lantai wajib dipilih',
-            'floor_id.exists' => 'Lantai yang dipilih tidak valid'
-        ]);
+            $room = Room::create([
+                'name' => $request->name,
+                'floor_id' => $request->floor_id
+            ]);
 
-        $room = Room::create([
-            'name' => $request->name,
-            'floor_id' => $request->floor_id
-        ]);
+            return redirect()->route('rooms.index')
+                ->with('success', 'Ruangan berhasil ditambahkan!');
 
-        return redirect()->route('rooms.index')
-            ->with('success', 'Ruangan berhasil ditambahkan!');
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return redirect()->back()
-            ->withErrors($e->validator)
-            ->withInput();
-
-    } catch (\Illuminate\Database\QueryException $e) {
-        // Tangkap error duplicate entry dari database
-        if ($e->errorInfo[1] == 1062) {
-            $floor = Floor::find($request->floor_id);
-            $floorName = $floor ? $floor->name : 'lantai yang dipilih';
-            
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
-                ->with('warning', 'Nama ruangan "' . $request->name . '" sudah digunakan di ' . $floorName . '. Silakan gunakan nama lain.')
+                ->withErrors($e->validator)
+                ->withInput();
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Tangkap error duplicate entry dari database
+            if ($e->errorInfo[1] == 1062) {
+                $floor = Floor::find($request->floor_id);
+                $floorName = $floor ? $floor->name : 'lantai yang dipilih';
+                
+                return redirect()->back()
+                    ->with('warning', 'Nama ruangan "' . $request->name . '" sudah digunakan di ' . $floorName . '. Silakan gunakan nama lain.')
+                    ->withInput();
+            }
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan pada database.')
                 ->withInput();
         }
-
-        return redirect()->back()
-            ->with('error', 'Terjadi kesalahan pada database.')
-            ->withInput();
     }
-}
 
     /**
      * Menampilkan form edit ruangan.
      */
- // RoomController.php
+    public function edit($id)
+    {
+        $room = Room::with('floor.building')->findOrFail($id); // ← TAMBAHKAN RELASI BUILDING
+        $buildings = Building::all(); // ← TAMBAHKAN INI
+        $floors = Floor::all();
+        return view('rooms.edit', compact('room', 'buildings', 'floors'));
+    }
 
-public function edit($id)
-{
-    $room = Room::with('floor')->findOrFail($id);
-    $floors = Floor::all();
-    return view('rooms.edit', compact('room', 'floors'));
-}
+    public function update(Request $request, $id)
+    {
+        $room = Room::findOrFail($id);
 
-public function update(Request $request, $id)
-{
-    $room = Room::findOrFail($id);
+        try {
+            $request->validate([
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    // Validasi unique: nama ruangan harus unik per lantai, kecuali record ini sendiri
+                    Rule::unique('rooms')->where(function ($query) use ($request, $id) {
+                        return $query->where('floor_id', $request->floor_id)
+                                     ->where('id', '!=', $id);
+                    })
+                ],
+                'building_id' => 'required|exists:buildings,id', // ← TAMBAHKAN INI
+                'floor_id' => 'required|exists:floors,id'
+            ], [
+                'name.required' => 'Nama ruangan wajib diisi',
+                'name.max' => 'Nama ruangan maksimal 255 karakter',
+                'name.unique' => 'Nama ruangan sudah digunakan di lantai ini. Silakan gunakan nama lain.',
+                'building_id.required' => 'Gedung wajib dipilih', // ← TAMBAHKAN INI
+                'building_id.exists' => 'Gedung yang dipilih tidak valid', // ← TAMBAHKAN INI
+                'floor_id.required' => 'Lantai wajib dipilih',
+                'floor_id.exists' => 'Lantai yang dipilih tidak valid'
+            ]);
 
-    try {
-        $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                // Validasi unique: nama ruangan harus unik per lantai, kecuali record ini sendiri
-                Rule::unique('rooms')->where(function ($query) use ($request, $id) {
-                    return $query->where('floor_id', $request->floor_id)
-                                 ->where('id', '!=', $id);
-                })
-            ],
-            'floor_id' => 'required|exists:floors,id'
-        ], [
-            'name.required' => 'Nama ruangan wajib diisi',
-            'name.max' => 'Nama ruangan maksimal 255 karakter',
-            'name.unique' => 'Nama ruangan sudah digunakan di lantai ini. Silakan gunakan nama lain.',
-            'floor_id.required' => 'Lantai wajib dipilih',
-            'floor_id.exists' => 'Lantai yang dipilih tidak valid'
-        ]);
+            $room->update([
+                'name' => $request->name,
+                'floor_id' => $request->floor_id
+            ]);
 
-        $room->update([
-            'name' => $request->name,
-            'floor_id' => $request->floor_id
-        ]);
+            return redirect()->route('rooms.index')
+                ->with('success', 'Ruangan berhasil diperbarui!');
 
-        return redirect()->route('rooms.index')
-            ->with('success', 'Ruangan berhasil diperbarui!');
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return redirect()->back()
-            ->withErrors($e->validator)
-            ->withInput();
-
-    } catch (\Illuminate\Database\QueryException $e) {
-        // Tangkap error duplicate entry dari database
-        if ($e->errorInfo[1] == 1062) {
-            $floor = Floor::find($request->floor_id);
-            $floorName = $floor ? $floor->name : 'lantai yang dipilih';
-            
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
-                ->with('warning', 'Nama ruangan "' . $request->name . '" sudah digunakan di ' . $floorName . '. Silakan gunakan nama lain.')
+                ->withErrors($e->validator)
+                ->withInput();
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Tangkap error duplicate entry dari database
+            if ($e->errorInfo[1] == 1062) {
+                $floor = Floor::find($request->floor_id);
+                $floorName = $floor ? $floor->name : 'lantai yang dipilih';
+                
+                return redirect()->back()
+                    ->with('warning', 'Nama ruangan "' . $request->name . '" sudah digunakan di ' . $floorName . '. Silakan gunakan nama lain.')
+                    ->withInput();
+            }
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan pada database.')
                 ->withInput();
         }
-
-        return redirect()->back()
-            ->with('error', 'Terjadi kesalahan pada database.')
-            ->withInput();
     }
-}
 
     /**
      * Hapus ruangan.
@@ -161,7 +166,7 @@ public function update(Request $request, $id)
         return redirect()->route('rooms.index')->with('success', 'Ruangan berhasil dihapus.');
     }
 
-     public function exportExcel()
+    public function exportExcel()
     {
         return Excel::download(new RoomsExport, 'rooms.xlsx');
     }

@@ -14,7 +14,8 @@ class Item extends Model
         'name',
         'code',
         'category_id',
-        'room_id',      // Ubah dari 'room' menjadi 'room_id'
+        'room_id',
+        'building_id',      // Ubah dari 'room' menjadi 'room_id'
         'floor_id',     // Ubah dari 'floor' menjadi 'floor_id'
         'status',
         'install_date',
@@ -56,4 +57,8 @@ class Item extends Model
     {
         return $this->belongsTo(Floor::class);
     }
+    public function building()
+{
+    return $this->belongsTo(Building::class);
+}
 }

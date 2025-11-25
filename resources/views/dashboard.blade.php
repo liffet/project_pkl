@@ -133,6 +133,7 @@
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Lantai</th>
                                 <th>Ruang</th>
                                 <th>Tanggal Pasang</th>
@@ -159,6 +160,7 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->building->name }}</td>
                                     <td>{{ $item->floor->name ?? '-' }}</td>
                                     <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
@@ -206,6 +208,7 @@
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Lantai</th>
                                 <th>Ruang</th>
                                 <th>Tanggal Pasang</th>
@@ -219,6 +222,7 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->building->name }}</td>
                                     <td>{{ $item->floor->name ?? '-' }}</td>
                                     <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
@@ -266,6 +270,7 @@
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Lantai</th>
                                 <th>Ruang</th>
                                 <th>Tanggal Pasang</th>
@@ -279,6 +284,7 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->building->name }}</td>
                                     <td>{{ $item->floor->name ?? '-' }}</td>
                                     <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>
@@ -326,6 +332,7 @@
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Kategori</th>
+                                <th>Gedung</th>
                                 <th>Lantai</th>
                                 <th>Ruang</th>
                                 <th>Tanggal Pasang</th>
@@ -339,6 +346,7 @@
                                     <td>{{ $item->code }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name ?? '-' }}</td>
+                                    <td>{{ $item->building->name }}</td>
                                     <td>{{ $item->floor->name ?? '-' }}</td>
                                     <td>{{ $item->room->name ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at ?? now())->format('d-m-Y') }}</td>

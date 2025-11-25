@@ -24,6 +24,7 @@ class Room extends Model
         return $this->belongsTo(Floor::class);
     }
 
+    
     /**
      * Relasi ke Item (jika 1 room punya banyak item)
      */

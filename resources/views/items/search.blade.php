@@ -37,6 +37,7 @@
                         <th>Kode</th>
                         <th>Nama</th>
                         <th>Kategori</th>
+                        <th>Gedung</th>
                         <th>Ruangan</th>
                         <th>Lantai</th>
                         <th>Status</th>
@@ -52,6 +53,7 @@
                         <td>
                             <span class="badge-category">{{ $item->category->name }}</span>
                         </td>
+                        <td>{{ $item->building->name ?? '-' }}
                         <td>{{ $item->room->name ?? '-' }}</td>
                         <td>{{ $item->floor->name ?? '-' }}</td>
                         <td>

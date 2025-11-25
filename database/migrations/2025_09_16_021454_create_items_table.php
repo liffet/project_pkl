@@ -17,6 +17,9 @@ return new class extends Migration
             // relasi ke tabel kategori
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
 
+            // relasi ke tabel gedung (BARU)
+            $table->foreignId('building_id')->constrained('buildings')->onDelete('cascade');
+
             // relasi ke tabel lantai
             $table->foreignId('floor_id')->constrained('floors')->onDelete('cascade');
 

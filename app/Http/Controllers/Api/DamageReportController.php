@@ -23,7 +23,8 @@ class DamageReportController extends Controller
             'user',
             'item.category',
             'item.room',
-            'item.floor'
+            'item.floor',
+            'item.building' // ← TAMBAHKAN INI
         ])->latest();
 
         if ($user->role === 'user') {
@@ -41,6 +42,7 @@ class DamageReportController extends Controller
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
+                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
                 'room' => $report->item->room->name ?? null,
                 'floor' => $report->item->floor->name ?? null,
                 'user' => $report->user->name ?? null,
@@ -97,7 +99,7 @@ class DamageReportController extends Controller
             'reason'  => $request->reason,
             'photo'   => $photoPath,
             'status'  => 'pending',
-        ])->load(['item.category', 'item.room', 'item.floor']);
+        ])->load(['item.category', 'item.room', 'item.floor', 'item.building']); // ← TAMBAHKAN 'item.building'
 
         return response()->json([
             'message' => 'Laporan kerusakan berhasil dikirim',
@@ -109,6 +111,7 @@ class DamageReportController extends Controller
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
+                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
                 'room' => $report->item->room->name ?? null,
                 'floor' => $report->item->floor->name ?? null,
             ]
@@ -124,7 +127,8 @@ class DamageReportController extends Controller
             'user',
             'item.category',
             'item.room',
-            'item.floor'
+            'item.floor',
+            'item.building' // ← TAMBAHKAN INI
         ])->findOrFail($id);
 
         if (Auth::user()->role === 'user' && $report->user_id !== Auth::id()) {
@@ -141,6 +145,7 @@ class DamageReportController extends Controller
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
+                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
                 'room' => $report->item->room->name ?? null,
                 'floor' => $report->item->floor->name ?? null,
                 'user' => $report->user->name ?? null,
@@ -163,7 +168,7 @@ class DamageReportController extends Controller
 
         $report = DamageReport::findOrFail($id);
         $report->update(['status' => $request->status]);
-        $report->load(['item.category', 'item.room', 'item.floor']);
+        $report->load(['item.category', 'item.room', 'item.floor', 'item.building']); // ← TAMBAHKAN 'item.building'
 
         return response()->json([
             'message' => 'Status laporan berhasil diperbarui',
@@ -175,6 +180,7 @@ class DamageReportController extends Controller
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
+                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
                 'room' => $report->item->room->name ?? null,
                 'floor' => $report->item->floor->name ?? null,
             ]
