@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-     Route::post('/user/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/user/change-password', [AuthController::class, 'changePassword']);
     // ================== HANYA ADMIN YANG BOLEH (CRUD) ==================
     Route::middleware('admin')->group(function () {
 
@@ -61,15 +61,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/floors/{id}', [FloorController::class, 'show']);
 
     Route::get('/buildings', [BuildingController::class, 'index']);
-Route::get('/buildings/{id}/floors', [BuildingController::class, 'floors']);
+    Route::get('/buildings/{id}/floors', [BuildingController::class, 'floors']);
     // ================== Laporan Kerusakan ==================
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/damage-reports', [DamageReportController::class, 'index']);
-    Route::post('/damage-reports', [DamageReportController::class, 'store']);
-    Route::get('/damage-reports/{id}', [DamageReportController::class, 'show']);
-    Route::put('/damage-reports/{id}', [DamageReportController::class, 'update']);
-    Route::delete('/damage-reports/{id}', [DamageReportController::class, 'destroy']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/damage-reports', [DamageReportController::class, 'index']);
+        Route::post('/damage-reports', [DamageReportController::class, 'store']);
+        Route::get('/damage-reports/{id}', [DamageReportController::class, 'show']);
+        Route::put('/damage-reports/{id}', [DamageReportController::class, 'update']);
+        Route::delete('/damage-reports/{id}', [DamageReportController::class, 'destroy']);
+    });
 });
 
-});

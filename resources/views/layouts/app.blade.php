@@ -823,15 +823,9 @@
                     </form>
                 </div>
 
-                <button class="navbar-btn" title="Notifikasi">
-                    <i class="bi bi-bell"></i>
-                    <span class="badge">3</span>
-                </button>
-
                 <div class="user-profile">
                     <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'AD',0,2)) }}</div>
                     <div class="user-name d-none d-md-block">{{ Auth::user()->name ?? 'Admin' }}</div>
-                    <i class="bi bi-chevron-down d-none d-md-block" style="font-size: 0.75rem; color: #9ca3af;"></i>
                 </div>
             </div>
         </nav>

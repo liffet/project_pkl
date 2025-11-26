@@ -13,7 +13,7 @@
                 Kelola data perangkat yang tersedia, termasuk informasi, status, dan ketersediaannya.
             </p>
         </div>
-3
+ 
         <div class="d-flex gap-3 align-items-center">
             <!-- Export Excel membawa FILTER -->
             <a href="{{ route('items.export.excel', request()->all()) }}"

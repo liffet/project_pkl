@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Floor;
 use Illuminate\Http\Request;
 use App\Exports\FloorsExport;
@@ -13,29 +14,29 @@ class FloorController extends Controller
     /**
      * Tampilkan semua lantai (untuk view web admin)
      */
-public function index(Request $request)
-{
-    $buildings = Building::all(); // untuk dropdown gedung
-    $floors = [];
+    public function index(Request $request)
+    {
+        $buildings = Building::all(); // untuk dropdown gedung
+        $floors = [];
 
-    if ($request->building_id) {
-        $floors = Floor::where('building_id', $request->building_id)->get();
+        if ($request->building_id) {
+            $floors = Floor::where('building_id', $request->building_id)->get();
+        }
+
+        return view('floors.index', compact('buildings', 'floors'));
     }
-
-    return view('floors.index', compact('buildings', 'floors'));
-}
 
 
     /**
      * API: Tampilkan lantai berdasarkan gedung.
      */
- public function byBuilding($buildingId)
-{
-    $building = \App\Models\Building::findOrFail($buildingId);
-    $floors = Floor::where('building_id', $buildingId)->get();
+    public function byBuilding($buildingId)
+    {
+        $building = \App\Models\Building::findOrFail($buildingId);
+        $floors = Floor::where('building_id', $buildingId)->get();
 
-    return view('floors.floors_by_building', compact('building', 'floors'));
-}
+        return view('floors.floors_by_building', compact('building', 'floors'));
+    }
 
 
     /**
@@ -53,9 +54,21 @@ public function index(Request $request)
 
 
 
- public function exportExcel($building_id)
-{
-    return Excel::download(new \App\Exports\FloorsByBuildingExport($building_id), 'lantai.xlsx');
-}
+    public function exportExcel($building_id)
+    {
+        return Excel::download(new \App\Exports\FloorsByBuildingExport($building_id), 'lantai.xlsx');
+    }
 
+    public function floors(Request $request)
+    {
+        $buildings = Building::all(); // untuk dropdown gedung
+
+        $floors = collect(); // gunakan Collection kosong
+
+        if ($request->building_id) {
+            $floors = Floor::where('building_id', $request->building_id)->get();
+        }
+
+        return view('floors.index', compact('buildings', 'floors'));
+    }
 }
