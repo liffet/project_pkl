@@ -28,8 +28,8 @@
     <div class="w-full md:w-1/2 bg-white rounded-3xl p-8 flex flex-col justify-center relative border border-black/10 shadow-sm">
 
       <!-- Logo -->
-      <div class="absolute top-5 left-5 flex items-center">
-        <img src="{{ asset('storage/images/logo.png') }}" alt="logo" width="70" class="object-contain" />
+      <div class="absolute top-5 left-5= flex items-center">
+        <img src="{{ asset('assets/images/logo.png') }}" alt="logo" width="70" class="object-contain" />
         <h5 class="font-semibold text-gray-800 opacity-80 text-base leading-none -ml-[6px]">
           ManagementHub
         </h5>
@@ -117,7 +117,7 @@
     <!-- Kanan: Ilustrasi -->
     <div class="w-full md:w-1/2 bg-white rounded-3xl overflow-hidden flex flex-col justify-center p-8">
       <div class="flex justify-end -mr-8">
-        <img src="{{ asset('storage/images/dashboard.png') }}" alt="Dashboard preview"
+        <img src="{{ asset('assets/images/dashboard.png') }}" alt="Dashboard preview"
           class="w-full md:w-11/12 h-auto object-cover rounded-l-2xl mb-9 border border-black/10">
       </div>
       <div class="px-0 md:px-4 pb-6 text-left">
