@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Floor;
-use App\Models\Building; // ← TAMBAHKAN INI
+use App\Models\Building; 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,16 +17,13 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::with(['floor.building'])->get(); // ← TAMBAHKAN RELASI BUILDING
+        $rooms = Room::with(['floor.building'])->get();
         return view('rooms.index', compact('rooms'));
     }
 
-    /**
-     * Menampilkan form tambah ruangan.
-     */
     public function create()
     {
-        $buildings = Building::all(); // ← TAMBAHKAN INI
+        $buildings = Building::all();
         $floors = Floor::all();
         return view('rooms.create', compact('buildings', 'floors'));
     }
@@ -39,19 +36,18 @@ class RoomController extends Controller
                     'required',
                     'string',
                     'max:255',
-                    // Validasi unique: nama ruangan harus unik per lantai
                     Rule::unique('rooms')->where(function ($query) use ($request) {
                         return $query->where('floor_id', $request->floor_id);
                     })
                 ],
-                'building_id' => 'required|exists:buildings,id', // ← TAMBAHKAN INI
+                'building_id' => 'required|exists:buildings,id',
                 'floor_id' => 'required|exists:floors,id'
             ], [
                 'name.required' => 'Nama ruangan wajib diisi',
                 'name.max' => 'Nama ruangan maksimal 255 karakter',
                 'name.unique' => 'Nama ruangan sudah digunakan di lantai ini. Silakan gunakan nama lain.',
-                'building_id.required' => 'Gedung wajib dipilih', // ← TAMBAHKAN INI
-                'building_id.exists' => 'Gedung yang dipilih tidak valid', // ← TAMBAHKAN INI
+                'building_id.required' => 'Gedung wajib dipilih',
+                'building_id.exists' => 'Gedung yang dipilih tidak valid',
                 'floor_id.required' => 'Lantai wajib dipilih',
                 'floor_id.exists' => 'Lantai yang dipilih tidak valid'
             ]);
@@ -70,7 +66,7 @@ class RoomController extends Controller
                 ->withInput();
 
         } catch (\Illuminate\Database\QueryException $e) {
-            // Tangkap error duplicate entry dari database
+        
             if ($e->errorInfo[1] == 1062) {
                 $floor = Floor::find($request->floor_id);
                 $floorName = $floor ? $floor->name : 'lantai yang dipilih';
@@ -86,13 +82,11 @@ class RoomController extends Controller
         }
     }
 
-    /**
-     * Menampilkan form edit ruangan.
-     */
+
     public function edit($id)
     {
         $room = Room::with('floor.building')->findOrFail($id); // ← TAMBAHKAN RELASI BUILDING
-        $buildings = Building::all(); // ← TAMBAHKAN INI
+        $buildings = Building::all(); 
         $floors = Floor::all();
         return view('rooms.edit', compact('room', 'buildings', 'floors'));
     }
@@ -107,20 +101,19 @@ class RoomController extends Controller
                     'required',
                     'string',
                     'max:255',
-                    // Validasi unique: nama ruangan harus unik per lantai, kecuali record ini sendiri
                     Rule::unique('rooms')->where(function ($query) use ($request, $id) {
                         return $query->where('floor_id', $request->floor_id)
                                      ->where('id', '!=', $id);
                     })
                 ],
-                'building_id' => 'required|exists:buildings,id', // ← TAMBAHKAN INI
+                'building_id' => 'required|exists:buildings,id',
                 'floor_id' => 'required|exists:floors,id'
             ], [
                 'name.required' => 'Nama ruangan wajib diisi',
                 'name.max' => 'Nama ruangan maksimal 255 karakter',
                 'name.unique' => 'Nama ruangan sudah digunakan di lantai ini. Silakan gunakan nama lain.',
-                'building_id.required' => 'Gedung wajib dipilih', // ← TAMBAHKAN INI
-                'building_id.exists' => 'Gedung yang dipilih tidak valid', // ← TAMBAHKAN INI
+                'building_id.required' => 'Gedung wajib dipilih', 
+                'building_id.exists' => 'Gedung yang dipilih tidak valid',
                 'floor_id.required' => 'Lantai wajib dipilih',
                 'floor_id.exists' => 'Lantai yang dipilih tidak valid'
             ]);
@@ -139,7 +132,6 @@ class RoomController extends Controller
                 ->withInput();
 
         } catch (\Illuminate\Database\QueryException $e) {
-            // Tangkap error duplicate entry dari database
             if ($e->errorInfo[1] == 1062) {
                 $floor = Floor::find($request->floor_id);
                 $floorName = $floor ? $floor->name : 'lantai yang dipilih';
@@ -155,9 +147,7 @@ class RoomController extends Controller
         }
     }
 
-    /**
-     * Hapus ruangan.
-     */
+
     public function destroy($id)
     {
         $room = Room::findOrFail($id);

@@ -9,17 +9,13 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class FloorsExport implements FromCollection, WithHeadings, WithMapping
 {
-    /**
-     * Ambil semua data lantai beserta relasi rooms
-     */
+
     public function collection()
     {
         return Floor::with('rooms')->get();
     }
 
-    /**
-     * Tentukan kolom yang akan ditampilkan di Excel
-     */
+
     public function map($floor): array
     {
         return [
@@ -30,9 +26,7 @@ class FloorsExport implements FromCollection, WithHeadings, WithMapping
         ];
     }
 
-    /**
-     * Header kolom Excel
-     */
+    
     public function headings(): array
     {
         return [

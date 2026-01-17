@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('photo')->nullable(); // bisa kosong, disarankan simpan path foto
             
             // Status laporan
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+            $table->string('status')->default('pending');
                 
             $table->timestamps();
         });

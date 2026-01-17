@@ -16,9 +16,7 @@ use App\Models\Building;
 
 class ItemWebController extends Controller
 {
-    // ============================
-    // 🔔 CEK PERBAIKAN
-    // ============================
+
     public function cekPerbaikan(TelegramService $telegram)
     {
         $itemHampir = Item::where('replacement_date', '<=', now()->addDays(7))->get();
@@ -35,12 +33,10 @@ class ItemWebController extends Controller
         return view('items.cek', compact('itemHampir', 'itemJatuhTempo'));
     }
 
-    // ============================
-    // 📋 INDEX
-    // ============================
+   
     public function index(Request $request)
 {
-    $buildings = Building::all(); // ← TAMBAHKAN INI
+    $buildings = Building::all(); 
     $categories = Category::all();
     $rooms = Room::all();
     $floors = Floor::all();
@@ -59,7 +55,7 @@ class ItemWebController extends Controller
         $itemsQuery->where('status', $request->status);
     }
 
-    // ← TAMBAHKAN FILTER GEDUNG
+ 
     if ($request->filled('building_id')) {
         $itemsQuery->where('building_id', $request->building_id);
     }
@@ -83,7 +79,7 @@ class ItemWebController extends Controller
     return view('items.index', compact(
         'items',
         'categories',
-        'buildings', // ← TAMBAHKAN INI
+        'buildings', 
         'rooms',
         'floors',
         'totalItems',
@@ -92,9 +88,7 @@ class ItemWebController extends Controller
         'needMaintenance'
     ));
 }
-// ============================
-// ➕ CREATE FORM
-// ============================
+
 public function create()
 {
     $buildings = Building::all();
@@ -105,9 +99,7 @@ public function create()
     return view('items.create', compact('categories', 'rooms', 'floors', 'buildings'));
 }
 
-// ============================
-// 💾 STORE
-// ============================
+
 public function store(Request $request)
 {
     $request->validate([

@@ -18,27 +18,17 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $user = Auth::user();
-
-        // Tab aktif dari query string, default 'all'
+        $user = Auth::user();   
         $activeTab = $request->query('tab', 'all');
-
-        // Page saat ini dari query string, default 1
         $page = $request->query('page', 1);
-
         $perPage = 10;
-
         $today = Carbon::today();
-
-        // Statistik
         $totalItems = Item::count();
         $maintenanceNow = Item::whereDate('replacement_date', '<', $today)->count();
         $soonMaintenance = Item::whereDate('replacement_date', '>=', $today)
             ->whereDate('replacement_date', '<=', $today->copy()->addDays(7))
             ->count();
         $safeItems = Item::whereDate('replacement_date', '>', $today->copy()->addDays(7))->count();
-
-        // Pagination dengan override page sesuai tab aktif
         $allItems = Item::with('category')
             ->orderBy('replacement_date', 'asc')
             ->paginate($perPage, ['*'], 'page', $activeTab === 'all' ? $page : 1);
@@ -84,7 +74,7 @@ class DashboardController extends Controller
         $acceptedReports = DamageReport::where('status', 'accepted')->count();
         $rejectedReports = DamageReport::where('status', 'rejected')->count();
 
-        // View bisa diganti agar tidak tumpang tindih dengan DamageReportController
+      
         return view('dashboard.reports', compact(
             'reports',
             'totalReports',
@@ -112,7 +102,7 @@ class DashboardController extends Controller
         $inactiveItems = Item::where('status', 'inactive')->count();
         $needMaintenance = Item::where('replacement_date', '<=', now()->addDays(7))->count();
 
-        // View diganti agar tidak bentrok
+
         return view('dashboard.items', compact(
             'items',
             'categories',
@@ -125,10 +115,10 @@ class DashboardController extends Controller
 
     public function damagereport(Request $request)
     {
-        // Tab aktif (default: all)
+
         $activeTab = $request->get('tab', 'all');
 
-        // Statistik
+  
         $statuses = ['pending', 'accepted', 'rejected'];
         $totalReports = DamageReport::count();
         $stats = [];
@@ -136,9 +126,9 @@ class DashboardController extends Controller
             $stats[$status] = DamageReport::where('status', $status)->count();
         }
 
-        // Pagination per tab
+   
         $reports = [];
-        // All reports
+  
         $reports['all'] = DamageReport::with(['user', 'item.category', 'item.room', 'item.floor'])
             ->latest()
             ->paginate(10, ['*'], 'all_page');

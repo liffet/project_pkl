@@ -13,7 +13,8 @@ class DamageReportController extends Controller
 {
     /**
      * 🔹 Menampilkan semua laporan
-     * Admin bisa lihat semua, user hanya miliknya
+     * Admin: semua laporan
+     * User: hanya laporan miliknya
      */
     public function index()
     {
@@ -24,7 +25,7 @@ class DamageReportController extends Controller
             'item.category',
             'item.room',
             'item.floor',
-            'item.building' // ← TAMBAHKAN INI
+            'item.building'
         ])->latest();
 
         if ($user->role === 'user') {
@@ -42,7 +43,7 @@ class DamageReportController extends Controller
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
-                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
+                'building' => $report->item->building->name ?? null,
                 'room' => $report->item->room->name ?? null,
                 'floor' => $report->item->floor->name ?? null,
                 'user' => $report->user->name ?? null,
@@ -56,8 +57,7 @@ class DamageReportController extends Controller
     }
 
     /**
-     * 🔹 User melaporkan item rusak (dengan foto bukti)
-     * Foto otomatis dikompres & disimpan di storage/app/public/damage_photos
+     * 🔹 User melaporkan item rusak (dengan foto)
      */
     public function store(Request $request)
     {
@@ -72,26 +72,25 @@ class DamageReportController extends Controller
         if ($request->hasFile('photo')) {
             $image = $request->file('photo');
 
-            // Pastikan folder ada
             $destination = storage_path('app/public/damage_photos');
             if (!file_exists($destination)) {
                 mkdir($destination, 0755, true);
             }
 
-            // Simpan nama file unik
-            $filename = uniqid('damage_') . '.' . $image->getClientOriginalExtension();
+            // 🔹 PAKSA format JPG (anti jfif error)
+            $filename = uniqid('damage_') . '.jpg';
 
-            // 🔹 Kompres otomatis (75%) dan resize agar lebih ringan
             Image::make($image)
                 ->resize(1024, null, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 })
-                ->save($destination . '/' . $filename, 75);
+                ->encode('jpg', 75) // 🔥 INI KUNCI NYA
+                ->save($destination . '/' . $filename);
 
-            // Simpan path di database
             $photoPath = 'damage_photos/' . $filename;
         }
+
 
         $report = DamageReport::create([
             'user_id' => Auth::id(),
@@ -99,7 +98,12 @@ class DamageReportController extends Controller
             'reason'  => $request->reason,
             'photo'   => $photoPath,
             'status'  => 'pending',
-        ])->load(['item.category', 'item.room', 'item.floor', 'item.building']); // ← TAMBAHKAN 'item.building'
+        ])->load([
+            'item.category',
+            'item.room',
+            'item.floor',
+            'item.building'
+        ]);
 
         return response()->json([
             'message' => 'Laporan kerusakan berhasil dikirim',
@@ -111,7 +115,7 @@ class DamageReportController extends Controller
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
-                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
+                'building' => $report->item->building->name ?? null,
                 'room' => $report->item->room->name ?? null,
                 'floor' => $report->item->floor->name ?? null,
             ]
@@ -119,7 +123,7 @@ class DamageReportController extends Controller
     }
 
     /**
-     * 🔹 Menampilkan detail laporan
+     * 🔹 Detail laporan
      */
     public function show($id)
     {
@@ -128,7 +132,7 @@ class DamageReportController extends Controller
             'item.category',
             'item.room',
             'item.floor',
-            'item.building' // ← TAMBAHKAN INI
+            'item.building'
         ])->findOrFail($id);
 
         if (Auth::user()->role === 'user' && $report->user_id !== Auth::id()) {
@@ -145,7 +149,7 @@ class DamageReportController extends Controller
                 'item_code' => $report->item->code ?? null,
                 'item_name' => $report->item->name ?? null,
                 'category' => $report->item->category->name ?? null,
-                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
+                'building' => $report->item->building->name ?? null,
                 'room' => $report->item->room->name ?? null,
                 'floor' => $report->item->floor->name ?? null,
                 'user' => $report->user->name ?? null,
@@ -154,41 +158,55 @@ class DamageReportController extends Controller
     }
 
     /**
-     * 🔹 Admin memperbarui status laporan
+     * 🔹 Admin update status laporan
      */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required|in:pending,accepted,rejected'
-        ]);
-
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $report = DamageReport::findOrFail($id);
-        $report->update(['status' => $request->status]);
-        $report->load(['item.category', 'item.room', 'item.floor', 'item.building']); // ← TAMBAHKAN 'item.building'
-
-        return response()->json([
-            'message' => 'Status laporan berhasil diperbarui',
-            'data' => [
-                'id' => $report->id,
-                'status' => $report->status,
-                'reason' => $report->reason,
-                'photo' => $report->photo ? asset('storage/' . $report->photo) : null,
-                'item_code' => $report->item->code ?? null,
-                'item_name' => $report->item->name ?? null,
-                'category' => $report->item->category->name ?? null,
-                'building' => $report->item->building->name ?? null, // ← TAMBAHKAN INI
-                'room' => $report->item->room->name ?? null,
-                'floor' => $report->item->floor->name ?? null,
-            ]
-        ]);
+   public function update(Request $request, $id)
+{
+    if (Auth::user()->role !== 'admin') {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
 
+    $request->validate([
+        'status' => 'required|in:accepted,rejected,in_progress,completed',
+    ]);
+
+    $report = DamageReport::findOrFail($id);
+
+    $allowedTransitions = [
+        'pending'     => ['accepted', 'rejected'],
+        'accepted'    => ['in_progress'],
+        'in_progress' => ['completed'],
+    ];
+
+    $currentStatus = $report->status;
+    $newStatus     = $request->status;
+
+    if (!isset($allowedTransitions[$currentStatus])) {
+        return response()->json([
+            'message' => 'Status tidak dapat diubah lagi'
+        ], 422);
+    }
+
+    if (!in_array($newStatus, $allowedTransitions[$currentStatus])) {
+        return response()->json([
+            'message' => 'Perubahan status tidak valid'
+        ], 422);
+    }
+
+    $report->update(['status' => $newStatus]);
+
+    return response()->json([
+        'message' => 'Status laporan berhasil diperbarui',
+        'data' => [
+            'id' => $report->id,
+            'status' => $report->status,
+        ]
+    ]);
+}
+
+
     /**
-     * 🔹 Hapus laporan (khusus admin)
+     * 🔹 Admin hapus laporan
      */
     public function destroy($id)
     {
@@ -198,7 +216,6 @@ class DamageReportController extends Controller
 
         $report = DamageReport::findOrFail($id);
 
-        // 🔹 Hapus foto juga dari storage jika ada
         if ($report->photo && Storage::disk('public')->exists($report->photo)) {
             Storage::disk('public')->delete($report->photo);
         }

@@ -22,7 +22,7 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        // ✅ Validasi: tidak boleh kosong, maksimal 255 karakter, dan unik
+   
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
         ], [
@@ -31,7 +31,7 @@ class CategoryController extends Controller
             'name.max' => 'Nama kategori maksimal 255 karakter.',
         ]);
 
-        // Simpan data ke database
+     
         Category::create($request->only('name'));
 
         return redirect()
@@ -46,7 +46,7 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category)
     {
-        // ✅ Validasi: tetap unik, tapi abaikan nama kategori yang sedang diedit
+        
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
         ], [

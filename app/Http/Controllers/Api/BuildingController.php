@@ -7,9 +7,7 @@ use App\Models\Building;
 
 class BuildingController extends Controller
 {
-    /**
-     * Mengambil semua gedung
-     */
+
     public function index()
     {
         return response()->json([
@@ -18,10 +16,7 @@ class BuildingController extends Controller
         ]);
     }
 
-    /**
-     * Mengambil lantai berdasarkan ID gedung
-     * GET /api/buildings/{id}/floors
-     */
+
     public function floors($id)
     {
         $building = Building::with('floors')->find($id);
