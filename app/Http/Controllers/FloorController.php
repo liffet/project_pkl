@@ -11,12 +11,10 @@ use App\Models\Building;
 
 class FloorController extends Controller
 {
-    /**
-     * Tampilkan semua lantai (untuk view web admin)
-     */
+
     public function index(Request $request)
     {
-        $buildings = Building::all(); // untuk dropdown gedung
+        $buildings = Building::all(); 
         $floors = [];
 
         if ($request->building_id) {
@@ -26,10 +24,6 @@ class FloorController extends Controller
         return view('floors.index', compact('buildings', 'floors'));
     }
 
-
-    /**
-     * API: Tampilkan lantai berdasarkan gedung.
-     */
     public function byBuilding($buildingId)
     {
         $building = \App\Models\Building::findOrFail($buildingId);
@@ -39,9 +33,6 @@ class FloorController extends Controller
     }
 
 
-    /**
-     * API: Detail lantai + rooms + items
-     */
     public function show($id)
     {
         $floor = Floor::with('rooms', 'items')->findOrFail($id);
@@ -61,9 +52,9 @@ class FloorController extends Controller
 
     public function floors(Request $request)
     {
-        $buildings = Building::all(); // untuk dropdown gedung
+        $buildings = Building::all(); 
 
-        $floors = collect(); // gunakan Collection kosong
+        $floors = collect(); 
 
         if ($request->building_id) {
             $floors = Floor::where('building_id', $request->building_id)->get();

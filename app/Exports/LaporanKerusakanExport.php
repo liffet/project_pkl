@@ -11,7 +11,7 @@ class LaporanKerusakanExport implements FromCollection, WithHeadings
     public function collection()
     {
         return DamageReport::with(['user', 'item.category', 'item.room', 'item.floor'])
-            ->orderBy('created_at', 'desc') // ubah ke desc agar yang terbaru di atas
+            ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($report, $index) {
                 return [

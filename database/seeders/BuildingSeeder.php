@@ -21,3 +21,4 @@ class BuildingSeeder extends Seeder
         }
     }
 }
+    

@@ -39,7 +39,7 @@ class ItemController extends Controller
 
             'floor' => $item->floor ? [
                 'id' => $item->floor->id,
-                'name' => $item->floor->name
+                'name' => $item->floor->name    
             ] : null,
 
             'room' => $item->room ? [

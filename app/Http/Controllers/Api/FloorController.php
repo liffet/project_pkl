@@ -7,22 +7,19 @@ use App\Models\Floor;
 
 class FloorController extends Controller
 {
-    /**
-     * Menampilkan semua lantai
-     */
+
     public function index()
 {
-    // 🔹 Cek apakah ada request building_id
+    
     $buildingId = request()->query('building_id');
 
-    // 🔹 Jika ada, filter lantai berdasarkan gedung
+    
     if ($buildingId) {
         $floors = Floor::where('building_id', $buildingId)
             ->select('id', 'name', 'building_id')
             ->get();
     } else {
-        // 🔹 Jika tidak ada, jangan tampilkan semua lantai (optional)
-        // Bisa kembalikan array kosong supaya tidak numpuk
+       
         $floors = [];
     }
 
@@ -33,9 +30,6 @@ class FloorController extends Controller
 }
 
 
-    /**
-     * Menampilkan 1 lantai berdasarkan ID
-     */
     public function show($id)
     {
         $floor = Floor::select('id', 'name', 'building_id')->find($id);

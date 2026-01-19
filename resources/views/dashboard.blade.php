@@ -393,28 +393,28 @@
 
 <style>
 
-    /* Warna Khusus Tiap Tab */
+   
 #safe-tab.active {
-    color: #10b981; /* hijau */
+    color: #10b981; 
     border-bottom-color: #10b981;
 }
 
 #soon-tab.active {
-    color: #f59e0b; /* kuning */
+    color: #f59e0b; 
     border-bottom-color: #f59e0b;
 }
 
 #urgent-tab.active {
-    color: #ef4444; /* merah */
+    color: #ef4444;
     border-bottom-color: #ef4444;
 }
 
 #all-tab.active {
-    color: #2D4194; /* biru default */
+    color: #2D4194; 
     border-bottom-color: #2D4194;
 }
 
-/* Stats Cards */
+
 .stats-card {
     background: white;
     border-radius: 12px;
@@ -474,7 +474,6 @@
     color: #ef4444;
 }
 
-/* Table Card */
 .table-card {
     background: white;
     border-radius: 12px;
@@ -482,7 +481,7 @@
     overflow: hidden;
 }
 
-/* Tabs */
+
 .custom-tabs {
     display: flex;
     border-bottom: 1px solid #e5e7eb;
@@ -509,7 +508,7 @@
     border-bottom-color: #2D4194;
 }
 
-/* Table */
+
 .custom-table {
     width: 100%;
     border-collapse: collapse;
@@ -535,7 +534,7 @@
     background: #fafbfc;
 }
 
-/* Badges */
+
 .badge-code {
     display: inline-block;
     padding: 0.25rem 0.625rem;
@@ -575,7 +574,7 @@
     color: #991b1b;
 }
 
-/* Pagination */
+
 .table-footer {
     display: flex;
     justify-content: space-between;

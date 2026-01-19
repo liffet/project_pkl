@@ -6,10 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - ManagementHub</title>
 
-  <!-- Tailwind CSS -->
+
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Font: Inter -->
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
@@ -21,7 +21,7 @@
 
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-8">
 
-  <!-- Container Utama -->
+
   <div class="flex flex-col md:flex-row gap-8 w-full max-w-7xl min-h-[900px]">
 
     <!-- Kiri: Form Login -->
@@ -29,6 +29,7 @@
 
       <!-- Logo -->
       <div class="absolute top-5 left-5 flex items-center">
+      <div class="absolute top-5 left-5= flex items-center">
         <img src="{{ asset('assets/images/logo.png') }}" alt="logo" width="70" class="object-contain" />
         <h5 class="font-semibold text-gray-800 opacity-80 text-base leading-none -ml-[6px]">
           ManagementHub

@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
-    /**
-     * Menampilkan semua ruangan (user & admin)
-     */
+
     public function index()
     {
         $rooms = Room::with('floor')->get();
@@ -22,9 +20,7 @@ class RoomController extends Controller
         ]);
     }
 
-    /**
-     * Menampilkan 1 ruangan
-     */
+   
     public function show($id)
     {
         $room = Room::with('floor')->find($id);
@@ -42,9 +38,6 @@ class RoomController extends Controller
         ]);
     }
 
-    /**
-     * Tambah ruangan (admin only)
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -61,9 +54,7 @@ class RoomController extends Controller
         ], 201);
     }
 
-    /**
-     * Update ruangan (admin only)
-     */
+ 
     public function update(Request $request, $id)
     {
         $room = Room::find($id);
@@ -89,9 +80,7 @@ class RoomController extends Controller
         ]);
     }
 
-    /**
-     * Hapus ruangan (admin only)
-     */
+ 
     public function destroy($id)
     {
         $room = Room::find($id);

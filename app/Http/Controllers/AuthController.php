@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Register untuk user biasa
+   
     public function register(Request $request)
     {
         $request->validate([
@@ -22,7 +22,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user', // default selalu user
+            'role' => 'user',
         ]);
 
         return response()->json([
@@ -31,7 +31,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Login untuk admin & user
+
     public function login(Request $request)
     {
         $request->validate([
@@ -45,7 +45,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // Hapus token lama biar gak numpuk
+     
         $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -67,13 +67,13 @@ class AuthController extends Controller
 {
     $user = $request->user();
 
-    // Validasi input
+    
     $request->validate([
         'old_password' => 'required',
-        'new_password' => 'required|min:6|confirmed', // otomatis butuh field new_password_confirmation
+        'new_password' => 'required|min:6|confirmed', 
     ]);
 
-    // Cek apakah password lama sesuai
+
     if (!Hash::check($request->old_password, $user->password)) {
         return response()->json([
             'success' => false,
@@ -81,7 +81,7 @@ class AuthController extends Controller
         ], 401);
     }
 
-    // Update password
+
     $user->password = Hash::make($request->new_password);
     $user->save();
 
@@ -91,21 +91,21 @@ class AuthController extends Controller
     ]);
 }
 
-    // Update profil user (name, email, password)
+
     public function updateProfile(Request $request)
     {
-        $user = $request->user(); // ✅ ambil user dari token Sanctum
+        $user = $request->user(); 
 
         $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:6|confirmed', // gunakan password_confirmation
+            'password' => 'nullable|string|min:6|confirmed', 
         ], [
             'email.unique' => 'Email ini sudah digunakan oleh pengguna lain.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
-        // 🔹 Update data hanya jika diisi
+
         if ($request->filled('name')) {
             $user->name = $request->name;
         }
@@ -132,7 +132,7 @@ class AuthController extends Controller
     }
 
 
-    // Logout
+
     public function logout(Request $request)
     {
         Auth::logout();
@@ -140,7 +140,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/'); // arahkan ke halaman utama
+        return redirect('/'); 
     }
 
 
@@ -173,7 +173,7 @@ class AuthController extends Controller
             'role' => 'user',
         ]);
 
-        // Langsung arahkan ke login + pesan sukses
+
         return redirect('/')->with('success', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
     }
 
@@ -184,7 +184,7 @@ class AuthController extends Controller
 
         if (auth()->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect('/dashboard'); // bikin halaman dashboard setelah login
+            return redirect('/dashboard'); 
         }
 
         return back()->withErrors([
