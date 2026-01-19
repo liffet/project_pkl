@@ -14,7 +14,7 @@ class Room extends Model
         'name',
         'floor_id',
     ];
-
+    
     /**
      * Relasi ke model Floor
      * Setiap Room berada di satu Floor
