@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - ManagementHub</title>
 
-
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-
+    <!-- Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <style>
@@ -24,7 +24,7 @@
     <!-- Container Utama -->
     <div class="flex flex-col md:flex-row gap-8 w-full max-w-7xl min-h-[900px]">
 
-        
+        <!-- Kiri: Form Register -->
         <div
             class="w-full md:w-1/2 bg-white rounded-3xl p-8 flex flex-col justify-center relative border border-black/10 shadow-sm">
 
@@ -135,7 +135,6 @@
         <div class="w-full md:w-1/2 bg-white rounded-3xl overflow-hidden flex flex-col justify-center p-8">
             <div class="flex justify-end -mr-8">
                 <img src="{{ asset('assets/images/dashboard.png') }}" alt="Register illustration"
-                <img src="{{ asset('assets/images/dashboard.png') }}"  alt="Register illustration"
                     class="w-full md:w-11/12 h-auto object-cover rounded-l-2xl mb-9 border border-black/10">
             </div>
             <div class="px-0 md:px-4 pb-6 text-left">

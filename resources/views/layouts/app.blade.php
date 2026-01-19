@@ -679,7 +679,6 @@
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo">
-                <img src="{{ asset('assets/images/logo.png') }}"  alt="Logo" class="sidebar-logo">
                 <span>ManagementHub</span>
             </a>
 

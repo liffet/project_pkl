@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
+use App\Models\Floor;
+use App\Models\Building;
+use App\Models\Category;
 use App\Models\DamageReport;
 use Illuminate\Http\Request;
-use App\Exports\LaporanKerusakanExport;
+use Illuminate\Foundation\Auth\User;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LaporanKerusakanExport;
 use Illuminate\Support\Facades\Storage;
 
 class DamageReportController extends Controller
@@ -15,105 +20,92 @@ class DamageReportController extends Controller
      * EXPORT EXCEL
      * ======================
      */
-    public function exportExcel()
-    {
-        return Excel::download(
-            new LaporanKerusakanExport(),
-            'laporan_kerusakan.xlsx'
-        );
-    }
+      public function exportExcel(Request $request)
+{
+    return Excel::download(
+        new LaporanKerusakanExport($request->query()),
+        'laporan_kerusakan.xlsx'
+    );
+}
+
 
     /**
      * ======================
      * INDEX (LIST + TAB)
      * ======================
      */
-    public function index(Request $request)
-{
-    $activeTab = $request->get('tab', 'all');
-
-    $relations = [
-        'user',
-        'item.category',
-        'item.room',
-        'item.floor',
-        'item.building',
-    ];
-
-    // ======================
-    // DATA PER TAB
-    // ======================
-
-    $allReports = DamageReport::with($relations)
-        ->latest()
-        ->paginate(10, ['*'], 'all_page');
-
-    $pendingList = DamageReport::with($relations)
-        ->where('status', 'pending')
-        ->latest()
-        ->paginate(10, ['*'], 'pending_page');
-
-    $acceptedList = DamageReport::with($relations)
-        ->where('status', 'accepted')
-        ->latest()
-        ->paginate(10, ['*'], 'accepted_page');
-
-    $inProgressList = DamageReport::with($relations)
-        ->where('status', 'in_progress')
-        ->latest()
-        ->paginate(10, ['*'], 'in_progress_page');
-
-    $completedList = DamageReport::with($relations)
-        ->where('status', 'completed')
-        ->latest()
-        ->paginate(10, ['*'], 'completed_page');
-
-    $rejectedList = DamageReport::with($relations)
-        ->where('status', 'rejected')
-        ->latest()
-        ->paginate(10, ['*'], 'rejected_page');
-
-    // ======================
-    // PILIH DATA UNTUK TABLE
-    // ======================
-
-    $reports = match ($activeTab) {
-        'pending'     => $pendingList,
-        'accepted'    => $acceptedList,
-        'in_progress' => $inProgressList,
-        'completed'   => $completedList,
-        'rejected'    => $rejectedList,
-        default       => $allReports,
-    };
-
-    // ======================
-    // STATISTIK DASHBOARD
-    // ======================
-
-    $totalReports      = DamageReport::count();
-    $pendingReports    = DamageReport::where('status', 'pending')->count();
-    $acceptedReports   = DamageReport::where('status', 'accepted')->count();
-    $inProgressReports = DamageReport::where('status', 'in_progress')->count();
-    $completedReports  = DamageReport::where('status', 'completed')->count();
-    $rejectedReports   = DamageReport::where('status', 'rejected')->count();
-
-    return view('reports.index', compact(
-        'activeTab',
-        'reports',        // 🔥 INI YANG WAJIB ADA
-        'allReports',
-        'pendingList',
-        'acceptedList',
-        'inProgressList',
-        'completedList',
-        'rejectedList',
-        'totalReports',
-        'pendingReports',
-        'acceptedReports',
-        'inProgressReports',
-        'completedReports',
-        'rejectedReports'
-    ));
-}
+  public function index(Request $request)
+    {
+        $query = DamageReport::with(['item.category', 'item.building', 'item.floor', 'item.room', 'user']);
+        
+        // Filter by item name
+        if ($request->filled('item_name')) {
+            $query->whereHas('item', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->item_name . '%');
+            });
+        }
+        
+        // Filter by category
+        if ($request->filled('category_id')) {
+            $query->whereHas('item', function($q) use ($request) {
+                $q->where('category_id', $request->category_id);
+            });
+        }
+        
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter by building
+        if ($request->filled('building_id')) {
+            $query->whereHas('item', function($q) use ($request) {
+                $q->where('building_id', $request->building_id);
+            });
+        }
+        
+        // Filter by floor
+        if ($request->filled('floor_id')) {
+            $query->whereHas('item', function($q) use ($request) {
+                $q->where('floor_id', $request->floor_id);
+            });
+        }
+        
+        // Filter by room
+        if ($request->filled('room_id')) {
+            $query->whereHas('item', function($q) use ($request) {
+                $q->where('room_id', $request->room_id);
+            });
+        }
+        
+        // Filter by user (reporter)
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        
+        $reports = $query->latest()->paginate(15);
+        
+        // Data untuk dropdown filter
+        $categories = Category::all();
+        $buildings = Building::all();
+        $floors = Floor::all();
+        $rooms = Room::all();
+        $users = User::all();
+        
+        // Statistik (semua data, tidak terpengaruh filter)
+        $totalReports = DamageReport::count();
+        $pendingReports = DamageReport::where('status', 'pending')->count();
+        $acceptedReports = DamageReport::where('status', 'accepted')->count();
+        $inProgressReports = DamageReport::where('status', 'in_progress')->count();
+        $completedReports = DamageReport::where('status', 'completed')->count();
+        $rejectedReports = DamageReport::where('status', 'rejected')->count();
+        
+        return view('reports.index', compact(
+            'reports', 'categories', 'buildings', 'floors', 'rooms', 'users',
+            'totalReports', 'pendingReports', 'acceptedReports', 
+            'inProgressReports', 'completedReports', 'rejectedReports'
+        ));
+    }
 
 
     /**
@@ -171,44 +163,28 @@ class DamageReportController extends Controller
      * UPDATE STATUS (ADMIN)
      * ======================
      */
+   
     public function update(Request $request, $id)
     {
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Unauthorized');
-        }
-
-        $request->validate([
-            'status' => 'required|in:accepted,rejected,in_progress,completed',
-        ]);
-
         $report = DamageReport::findOrFail($id);
-
-        $allowedTransitions = [
-            'pending'     => ['accepted', 'rejected'],
-            'accepted'    => ['in_progress'],
-            'in_progress' => ['completed'],
-        ];
-
-        $currentStatus = $report->status;
-        $newStatus     = $request->status;
-
-        if (!isset($allowedTransitions[$currentStatus])) {
-            return back()->with('error', 'Status ini tidak dapat diubah lagi.');
-        }
-
-        if (!in_array($newStatus, $allowedTransitions[$currentStatus])) {
-            return back()->with('error', 'Perubahan status tidak valid.');
-        }
-
-        $report->update([
-            'status' => $newStatus,
+        
+        $request->validate([
+            'status' => 'required|in:pending,accepted,in_progress,completed,rejected'
         ]);
-
-        return redirect()
-            ->route('damage-reports.index', [
-                'tab' => $request->get('tab', 'all'),
-            ])
-            ->with('success', 'Status laporan berhasil diperbarui.');
+        
+        $report->update([
+            'status' => $request->status
+        ]);
+        
+        $statusMessages = [
+            'accepted' => 'Laporan berhasil diterima',
+            'rejected' => 'Laporan telah ditolak',
+            'in_progress' => 'Proses perbaikan dimulai',
+            'completed' => 'Perbaikan telah selesai'
+        ];
+        
+        return redirect()->route('damage-reports.index')
+            ->with('success', $statusMessages[$request->status] ?? 'Status berhasil diperbarui');
     }
 
     /**
