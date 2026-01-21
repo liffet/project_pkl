@@ -16,6 +16,22 @@
     body {
       font-family: "Inter", sans-serif;
     }
+
+    /* Chrome / Edge: sembunyikan icon mata & autofill */
+    input[type="password"]::-webkit-credentials-auto-fill-button,
+    input[type="password"]::-webkit-textfield-decoration-container,
+    input[type="password"]::-webkit-clear-button,
+    input[type="password"]::-webkit-inner-spin-button {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    /* Edge lama / IE */
+    input::-ms-reveal,
+    input::-ms-clear {
+      display: none;
+    }
   </style>
 </head>
 
@@ -35,7 +51,7 @@
         </h5>
       </div>
 
-      <!-- Judul -->
+      <!-- Judul -->  
       <div class="mt-20 text-center">
         <h4 class="text-[18px] text-gray-800 mb-2">
           Selamat datang di
@@ -46,18 +62,6 @@
         </p>
       </div>
 
-      <!-- Tombol Tab -->
-      <div class="flex border border-gray-300 rounded-xl overflow-hidden mb-8 text-xs w-8/12 mx-auto">
-        <a href="/login"
-          class="flex-1 h-10 flex items-center justify-center font-medium text-black bg-[#E5E8F7]">
-          Masuk
-        </a>
-        <a href="/register"
-          class="flex-1 h-10 flex items-center justify-center font-medium bg-white text-gray-700 hover:bg-gray-100 transition">
-          Daftar
-        </a>
-      </div>
-
       @if ($errors->any())
       <div class="w-4/5 mx-auto mb-4 p-3 bg-red-100 border border-red-300 text-red-700 text-sm rounded-lg text-center">
         {{ $errors->first() }}
@@ -66,52 +70,104 @@
 
 
       <!-- Form Login -->
-      <form method="POST" action="{{ route('login.web') }}" class="space-y-5 -mt-2">
+      <form method="POST" action="{{ route('login.web') }}" class="space-y-6 -mt-2">
         @csrf
 
         <!-- Email -->
         <div class="w-4/5 mx-auto">
-          <label class="block text-xs font-medium text-gray-700 mb-1">Email *</label>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">
+            Email
+          </label>
+
           <div
-            class="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-[#697DCD] focus-within:border-transparent">
-            <div class="pl-3 pr-2 text-gray-400 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                  d="M3.75 5.25L3 6V18L3.75 18.75H20.25L21 18V6L20.25 5.25H3.75ZM4.5 7.6955V17.25H19.5V7.69525L11.9999 14.5136L4.5 7.6955ZM18.3099 6.75H5.68986L11.9999 12.4864L18.3099 6.75Z"
-                  fill="currentColor" />
-              </svg>
-            </div>
-            <input type="email" name="email" placeholder="Masukkan Alamat Email Anda"
-              class="flex-1 py-2 text-sm outline-none" required />
+            class="flex items-center gap-2 border border-gray-300 rounded-xl px-3 py-2.5
+             focus-within:ring-2 focus-within:ring-[#697DCD] focus-within:border-transparent
+             transition">
+            <svg
+              viewBox="0 0 24 24"
+              class="w-5 h-5 text-gray-400"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M3.75 5.25L3 6V18L3.75 18.75H20.25L21 18V6L20.25 5.25H3.75ZM4.5 7.6955V17.25H19.5V7.69525L11.9999 14.5136L4.5 7.6955ZM18.3099 6.75H5.68986L11.9999 12.4864L18.3099 6.75Z"
+                fill="currentColor" />
+            </svg>
+
+            <!-- Input -->
+            <input
+              type="email"
+              name="email"
+              placeholder="email@contoh.com"
+              class="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
+              required />
           </div>
         </div>
 
         <!-- Password -->
         <div class="w-4/5 mx-auto">
-          <label class="block text-xs font-medium text-gray-700 mb-1">Kata Sandi *</label>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">
+            Kata Sandi
+          </label>
+
           <div
-            class="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-[#697DCD] focus-within:border-transparent">
-            <div class="pl-3 pr-2 text-gray-400 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </div>
-            <input type="password" name="password" placeholder="Masukkan Kata Sandi Anda"
-              class="flex-1 py-2 text-sm outline-none" required />
+            class="flex items-center gap-2 border border-gray-300 rounded-xl px-3 py-2.5
+           focus-within:ring-2 focus-within:ring-[#697DCD] focus-within:border-transparent
+           transition">
+
+            <!-- Lock Icon -->
+            <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+              <path d="M7 10V8a5 5 0 0110 0v2"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <rect x="4" y="10" width="16" height="11" rx="2"
+                stroke="currentColor" stroke-width="2" />
+            </svg>
+
+            <!-- Input -->
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="new-password"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              class="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
+              required />
+
+            <!-- Toggle -->
+            <button
+              type="button"
+              onclick="togglePassword(this)"
+              class="text-xs font-medium text-gray-400 hover:text-gray-600 transition select-none">
+              Lihat
+            </button>
           </div>
         </div>
 
         <!-- Tombol Masuk -->
-        <button type="submit"
-          class="w-4/5 mx-auto block py-2 bg-[#697DCD] hover:bg-[#5E72C3] text-white text-sm font-medium rounded-lg transition">
+        <button
+          type="submit"
+          class="w-4/5 mx-auto block py-2.5 bg-[#697DCD] hover:bg-[#5E72C3]
+           text-white text-sm font-semibold rounded-xl transition shadow-sm">
           Masuk
         </button>
       </form>
+
+      <script>
+        function togglePassword(btn) {
+          const input = document.getElementById('password');
+          const isHidden = input.type === 'password';
+
+          input.type = isHidden ? 'text' : 'password';
+          btn.textContent = isHidden ? 'Sembunyikan' : 'Lihat';
+        }
+      </script>
+
+
     </div>
 
     <!-- Kanan: Ilustrasi -->
