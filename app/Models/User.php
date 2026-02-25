@@ -31,7 +31,7 @@ class User extends Authenticatable
 
     /**
      * Casting kolom ke tipe tertentu.
-     */
+     */ 
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',

@@ -25,50 +25,62 @@ class LaporanKerusakanExport implements FromCollection, WithHeadings
             'item.building'
         ])->orderBy('created_at', 'desc');
 
-        // 🔍 Nama Barang
+        // ================= FILTER =================
+
         if (!empty($this->filters['item_name'])) {
             $query->whereHas('item', function ($q) {
                 $q->where('name', 'like', '%' . $this->filters['item_name'] . '%');
             });
         }
 
-        // 🔍 Kategori
         if (!empty($this->filters['category_id'])) {
             $query->whereHas('item', function ($q) {
                 $q->where('category_id', $this->filters['category_id']);
             });
         }
 
-        // 🔍 Status
         if (!empty($this->filters['status'])) {
             $query->where('status', $this->filters['status']);
         }
 
-        // 🔍 Gedung
         if (!empty($this->filters['building_id'])) {
             $query->whereHas('item', function ($q) {
                 $q->where('building_id', $this->filters['building_id']);
             });
         }
 
-        // 🔍 Lantai
         if (!empty($this->filters['floor_id'])) {
             $query->whereHas('item', function ($q) {
                 $q->where('floor_id', $this->filters['floor_id']);
             });
         }
 
-        // 🔍 Ruangan
         if (!empty($this->filters['room_id'])) {
             $query->whereHas('item', function ($q) {
                 $q->where('room_id', $this->filters['room_id']);
             });
         }
 
-        // 🔍 Pelapor
         if (!empty($this->filters['user_id'])) {
             $query->where('user_id', $this->filters['user_id']);
         }
+
+        // ================= FILTER TANGGAL =================
+
+        // Filter 1 hari
+        if (!empty($this->filters['tanggal'])) {
+            $query->whereDate('created_at', $this->filters['tanggal']);
+        }
+
+        // Filter periode
+        if (!empty($this->filters['tanggal_dari']) && !empty($this->filters['tanggal_sampai'])) {
+            $query->whereBetween('created_at', [
+                $this->filters['tanggal_dari'] . ' 00:00:00',
+                $this->filters['tanggal_sampai'] . ' 23:59:59'
+            ]);
+        }
+
+        // ================= MAP DATA =================
 
         return $query->get()->values()->map(function ($report, $index) {
             return [
@@ -77,6 +89,7 @@ class LaporanKerusakanExport implements FromCollection, WithHeadings
                 'Nama Barang' => $report->item->name ?? '-',
                 'Kode Perangkat' => $report->item->code ?? '-',
                 'Kategori' => $report->item->category->name ?? '-',
+                'Gedung' => $report->item->building->name ?? '-',
                 'Lantai' => $report->item->floor->name ?? '-',
                 'Ruangan' => $report->item->room->name ?? '-',
                 'Deskripsi' => $report->reason,
@@ -94,6 +107,7 @@ class LaporanKerusakanExport implements FromCollection, WithHeadings
             'Nama Barang',
             'Kode Perangkat',
             'Kategori',
+            'Gedung',
             'Lantai',
             'Ruangan',
             'Deskripsi',

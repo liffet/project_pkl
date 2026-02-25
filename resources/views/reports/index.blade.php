@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1" style="color: #1f2937; font-size: 1.5rem;">
-                Daftar Laporan Kerusakan Perangkat
+                Laporan Kerusakan
             </h2>
             <p class="text-muted mb-0" style="font-size: 0.875rem;">
                 Kelola dan pantau laporan kerusakan perangkat yang diajukan pengguna
@@ -14,11 +14,11 @@
         </div>
         <div class="d-flex align-items-center gap-3">
             <!-- Export Excel dengan Filter -->
-            <a href="{{ route('damage-reports.export.excel', request()->all()) }}"
+            <a href="{{ route('damage-reports.export.excel', request()->query()) }}"
                class="btn shadow-sm d-flex align-items-center px-3 py-2 fw-semibold"
                style="background-color:#2D4194;color:white;border:none;border-radius:8px;">
                 <i class="bi bi-file-earmark-excel me-2"></i>
-                Export Excel
+                Export
             </a>
             <small class="text-muted">{{ \Carbon\Carbon::now()->isoFormat('D MMMM YYYY') }}</small>
         </div>
@@ -81,7 +81,9 @@
 
                 @php
                     $filterCount = count(array_filter(request()->only([
-                        'item_name','category_id','status','building_id','floor_id','room_id','user_id'
+                        'item_name','category_id','status',
+                        'building_id','floor_id','room_id','user_id',
+                        'tanggal','tanggal_dari','tanggal_sampai'
                     ])));
                 @endphp
 
@@ -97,7 +99,11 @@
             @endif
         </div>
 
-        @if($filterCount > 0)
+        @if(request()->anyFilled([
+            'item_name','category_id','status',
+            'building_id','floor_id','room_id','user_id',
+            'tanggal','tanggal_dari','tanggal_sampai'
+        ]))
             <div class="active-filters mt-3">
                 <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Filter Aktif:</small>
 
@@ -108,17 +114,10 @@
                         </span>
                     @endif
 
-                    @if(request('category_id'))
-                        <span class="filter-chip">
-                            <i class="bi bi-tags"></i>
-                            Kategori: {{ optional($categories->firstWhere('id', request('category_id')))->name ?? '-' }}
-                        </span>
-                    @endif
-
                     @if(request('status'))
                         <span class="filter-chip">
                             <i class="bi bi-info-circle"></i>
-                            Status: 
+                            Status:
                             @switch(request('status'))
                                 @case('pending') Pending @break
                                 @case('accepted') Diterima @break
@@ -126,6 +125,23 @@
                                 @case('completed') Selesai @break
                                 @case('rejected') Ditolak @break
                             @endswitch
+                        </span>
+                    @endif
+
+                    @if(request('tanggal'))
+                        <span class="filter-chip">
+                            <i class="bi bi-calendar"></i>
+                            Tanggal: {{ \Carbon\Carbon::parse(request('tanggal'))->format('d-m-Y') }}
+                        </span>
+                    @endif
+
+                    @if(request('tanggal_dari') && request('tanggal_sampai'))
+                        <span class="filter-chip">
+                            <i class="bi bi-calendar-range"></i>
+                            Periode:
+                            {{ \Carbon\Carbon::parse(request('tanggal_dari'))->format('d-m-Y') }}
+                            -
+                            {{ \Carbon\Carbon::parse(request('tanggal_sampai'))->format('d-m-Y') }}
                         </span>
                     @endif
 
@@ -173,24 +189,11 @@
 
                     <div class="modal-body">
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label-filter">Nama Item</label>
                                 <input type="text" name="item_name" class="form-control"
                                        placeholder="Cari nama item..."
                                        value="{{ request('item_name') }}">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label-filter">Kategori</label>
-                                <select name="category_id" class="form-select">
-                                    <option value="">Semua Kategori</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}"
-                                            {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
                             </div>
 
                             <div class="col-md-4">
@@ -203,6 +206,24 @@
                                     <option value="completed" {{ request('status')=='completed'?'selected':'' }}>Selesai</option>
                                     <option value="rejected" {{ request('status')=='rejected'?'selected':'' }}>Ditolak</option>
                                 </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label-filter">Tanggal</label>
+                                <input type="date" name="tanggal" class="form-control"
+                                       value="{{ request('tanggal') }}">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label-filter">Tanggal Dari</label>
+                                <input type="date" name="tanggal_dari" class="form-control"
+                                       value="{{ request('tanggal_dari') }}">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label-filter">Tanggal Sampai</label>
+                                <input type="date" name="tanggal_sampai" class="form-control"
+                                       value="{{ request('tanggal_sampai') }}">
                             </div>
 
                             <div class="col-md-4">
@@ -229,7 +250,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label-filter">Ruangan</label>
                                 <select name="room_id" class="form-select">
                                     <option value="">Semua Ruangan</option>
@@ -241,7 +262,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label-filter">Pelapor</label>
                                 <select name="user_id" class="form-select">
                                     <option value="">Semua Pelapor</option>
@@ -271,42 +292,34 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Kode Item</th>
-                        <th>Nama Item</th>
+                        <th>Item</th>
                         <th>Kategori</th>
                         <th>Gedung</th>
                         <th>Lantai</th>
                         <th>Ruangan</th>
                         <th>Pelapor</th>
+                        <th>Tanggal</th>
                         <th>Alasan</th>
-                        <th>Foto</th>
                         <th>Status</th>
+                        <th>Foto</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($reports as $index => $report)
+                    @forelse($reports as $report)
                     <tr>
-                        <td>{{ $reports->firstItem() + $index }}</td>
-                        <td><span class="badge-code">{{ $report->item->code ?? '-' }}</span></td>
+                        <td>{{ $loop->iteration + ($reports->currentPage()-1)*$reports->perPage() }}</td>
                         <td class="fw-medium">{{ $report->item->name ?? '-' }}</td>
                         <td><span class="badge-category">{{ $report->item->category->name ?? '-' }}</span></td>
                         <td>{{ $report->item->building->name ?? '-' }}</td>
                         <td>{{ $report->item->floor->name ?? '-' }}</td>
                         <td>{{ $report->item->room->name ?? '-' }}</td>
                         <td>{{ $report->user->name ?? '-' }}</td>
-                        <td>{{ Str::limit($report->reason, 40) }}</td>
                         <td>
-                            @if($report->photo)
-                            <img src="{{ asset('storage/' . $report->photo) }}"
-                                alt="Foto Kerusakan"
-                                class="damage-photo-thumbnail"
-                                data-bs-toggle="modal"
-                                data-bs-target="#photoModal{{ $report->id }}">
-                            @else
-                            <div class="no-image"><i class="bi bi-image"></i></div>
-                            @endif
+                            <div>{{ $report->created_at->format('d-m-Y') }}</div>
+                            <small class="text-muted">{{ $report->created_at->format('H:i') }}</small>
                         </td>
+                        <td>{{ \Illuminate\Support\Str::limit($report->reason, 40) }}</td>
                         <td>
                             @switch($report->status)
                                 @case('pending')
@@ -327,51 +340,21 @@
                             @endswitch
                         </td>
                         <td>
-                            <div class="d-flex gap-2">
-                                <!-- Pending: Accept/Reject -->
-                                @if($report->status === 'pending')
-                                    <form action="{{ route('damage-reports.update', $report->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="accepted">
-                                        <button class="btn-action success" onclick="return confirm('Terima laporan ini?')">
-                                            <i class="bi bi-check-lg"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('damage-reports.update', $report->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="rejected">
-                                        <button class="btn-action danger" onclick="return confirm('Tolak laporan ini?')">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                    </form>
-                                @endif
-
-                                <!-- Accepted: Start Progress -->
-                                @if($report->status === 'accepted')
-                                    <form action="{{ route('damage-reports.update', $report->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="in_progress">
-                                        <button class="btn-action info" onclick="return confirm('Mulai proses perbaikan?')">
-                                            <i class="bi bi-tools"></i>
-                                        </button>
-                                    </form>
-                                @endif
-
-                                <!-- In Progress: Mark Complete -->
-                                @if($report->status === 'in_progress')
-                                    <form action="{{ route('damage-reports.update', $report->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="status" value="completed">
-                                        <button class="btn-action primary" onclick="return confirm('Tandai sebagai selesai?')">
-                                            <i class="bi bi-clipboard-check"></i>
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
+                            @if($report->photo)
+                                <img src="{{ asset('storage/'.$report->photo) }}"
+                                    alt="Foto Kerusakan"
+                                    class="damage-photo-thumbnail"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#photoModal{{ $report->id }}">
+                            @else
+                                <div class="no-image"><i class="bi bi-image"></i></div>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('damage-reports.show', $report->id) }}"
+                               class="btn-action primary d-inline-flex">
+                                <i class="bi bi-eye"></i>
+                            </a>
                         </td>
                     </tr>
 
@@ -398,12 +381,13 @@
                         </div>
                     </div>
                     @endif
+
                     @empty
                     <tr>
                         <td colspan="12" class="text-center py-5 text-muted">
                             <i class="bi bi-inbox" style="font-size:3rem;opacity:0.3;"></i>
                             <p class="mt-2">
-                                {{ $filterCount>0 ? 'Tidak ada laporan sesuai filter' : 'Tidak ada laporan kerusakan' }}
+                                {{ $filterCount > 0 ? 'Tidak ada laporan sesuai filter' : 'Tidak ada laporan kerusakan' }}
                             </p>
                         </td>
                     </tr>
@@ -416,7 +400,7 @@
         @if(method_exists($reports,'links'))
             <div class="table-footer d-flex justify-content-between align-items-center">
                 <small>Menampilkan {{ $reports->firstItem() }} - {{ $reports->lastItem() }} dari {{ $reports->total() }} data</small>
-                {{ $reports->appends(request()->all())->links() }}
+                {{ $reports->withQueryString()->links() }}
             </div>
         @endif
     </div>
@@ -480,12 +464,12 @@
         border-radius: 50%;
     }
 
-    .stats-bullet.primary { background: #3b82f6; }
+    .stats-bullet.primary   { background: #3b82f6; }
     .stats-bullet.secondary { background: #6b7280; }
-    .stats-bullet.success { background: #10b981; }
-    .stats-bullet.warning { background: #f59e0b; }
-    .stats-bullet.danger { background: #ef4444; }
-    .stats-bullet.info { background: #0ea5e9; }
+    .stats-bullet.success   { background: #10b981; }
+    .stats-bullet.warning   { background: #f59e0b; }
+    .stats-bullet.danger    { background: #ef4444; }
+    .stats-bullet.info      { background: #0ea5e9; }
 
     .stats-value {
         font-size: 2rem;
@@ -503,12 +487,12 @@
         font-size: 1.5rem;
     }
 
-    .stats-icon.primary { background: #dbeafe; color: #3b82f6; }
+    .stats-icon.primary   { background: #dbeafe; color: #3b82f6; }
     .stats-icon.secondary { background: #f3f4f6; color: #6b7280; }
-    .stats-icon.success { background: #d1fae5; color: #10b981; }
-    .stats-icon.warning { background: #fef3c7; color: #f59e0b; }
-    .stats-icon.danger { background: #fee2e2; color: #ef4444; }
-    .stats-icon.info { background: #e0f2fe; color: #0ea5e9; }
+    .stats-icon.success   { background: #d1fae5; color: #10b981; }
+    .stats-icon.warning   { background: #fef3c7; color: #f59e0b; }
+    .stats-icon.danger    { background: #fee2e2; color: #ef4444; }
+    .stats-icon.info      { background: #e0f2fe; color: #0ea5e9; }
 
     /* Filter Button */
     .btn-filter {
@@ -720,17 +704,6 @@
     }
 
     /* Badges */
-    .badge-code {
-        display: inline-block;
-        padding: 0.25rem 0.625rem;
-        background: #f3f4f6;
-        color: #374151;
-        border-radius: 6px;
-        font-size: 0.8125rem;
-        font-weight: 500;
-        font-family: 'Monaco', 'Courier New', monospace;
-    }
-
     .badge-category {
         display: inline-block;
         padding: 0.25rem 0.75rem;
@@ -752,8 +725,8 @@
     .badge-status.primary { background: #dbeafe; color: #1e40af; }
     .badge-status.success { background: #d1fae5; color: #065f46; }
     .badge-status.warning { background: #fef3c7; color: #92400e; }
-    .badge-status.danger { background: #fee2e2; color: #991b1b; }
-    .badge-status.info { background: #e0f2fe; color: #075985; }
+    .badge-status.danger  { background: #fee2e2; color: #991b1b; }
+    .badge-status.info    { background: #e0f2fe; color: #075985; }
 
     /* Action Buttons */
     .btn-action {
@@ -767,36 +740,7 @@
         font-size: 0.875rem;
         cursor: pointer;
         transition: all 0.2s;
-    }
-
-    .btn-action.success {
-        background: #d1fae5;
-        color: #065f46;
-    }
-
-    .btn-action.success:hover {
-        background: #10b981;
-        color: white;
-    }
-
-    .btn-action.danger {
-        background: #fee2e2;
-        color: #991b1b;
-    }
-
-    .btn-action.danger:hover {
-        background: #ef4444;
-        color: white;
-    }
-
-    .btn-action.info {
-        background: #e0f2fe;
-        color: #075985;
-    }
-
-    .btn-action.info:hover {
-        background: #0ea5e9;
-        color: white;
+        text-decoration: none;
     }
 
     .btn-action.primary {
